@@ -2,14 +2,14 @@
 using Refit;
 using System.Threading.Tasks;
 
-namespace Contracts
+namespace Contracts.Api
 {
     public interface ISessionApi
     {
-        [Post("/api/Session/LogIn")]
+        [Post("/api/session/LogIn")]
         Task<string> LogIn([Body]LogInRequest request);
 
-        [Delete("/api/Session/LogIn/")]
-        Task LogOut([Body]AuthenticatedRequest request);
+        [Delete("/api/session/LogIn/")]
+        Task LogOut([Body]BearerTokenRequest request);
     }
 }

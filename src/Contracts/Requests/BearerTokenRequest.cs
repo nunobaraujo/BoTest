@@ -1,6 +1,6 @@
 ﻿namespace Contracts.Requests
 {
-    public class AuthenticatedRequest
+    public class BearerTokenRequest
     {
         public string Token { get; set; }
     }

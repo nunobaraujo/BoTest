@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using Backend.Managers;
 using Backend.Middleware.Validator;
 using Backend.Services;
+using Core.Managers;
 using Core.Services;
 using Core.Services.Session;
 using Core.Settings;
@@ -32,8 +34,8 @@ namespace Backend.Modules
                 .As<ISessionService>()
                 .SingleInstance();
 
-            builder.RegisterType<ServerManagerService>()
-                .As<IServerManagerService>()
+            builder.RegisterType<UserManager>()
+                .As<IUserManager>()
                 .SingleInstance();
         }
     }

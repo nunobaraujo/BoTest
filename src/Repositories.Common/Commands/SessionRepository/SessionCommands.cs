@@ -1,4 +1,4 @@
-﻿using Core.Repositories;
+﻿using Core.Repositories.Commands.SessionRepository;
 using Core.Services.Session;
 using Core.Services.Session.Models;
 using Dapper;
@@ -6,38 +6,43 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.Common
+namespace Repositories.Common.Commands.SessionRepository
 {
-    public abstract class SessionRepositoryBase : ISessionRepository
+    internal class SessionCommands : ISessionCommands
     {
-        protected abstract IDbConnection CreateConnection();
-        
-        public async Task<IUserSession> GetSession(string token)
+        private readonly Func<IDbConnection> _createdDbConnection;
+
+        public SessionCommands(Func<IDbConnection> createdDbConnection)
+        {
+            _createdDbConnection = createdDbConnection;
+        }
+
+
+        public async Task<IUserSession> Get(string token)
         {
             var query = $"SELECT {Common.GetColumnNames<IUserSession>()} FROM UserSession";
             var res = new List<IUserSession>();
-            using (var cnn = CreateConnection())
-            {   
+            using (var cnn = _createdDbConnection())
+            {
                 return await cnn.QueryFirstOrDefaultAsync<UserSession>(query + " WHERE SessionToken = @SessionToken", new { SessionToken = token });
             }
         }
 
-        public async Task NewSession(IUserSession session)
+        public async Task New(IUserSession session)
         {
             if (session == null)
                 throw new ArgumentException("Session cannot be null", nameof(session));
-            
-            var query = $"INSERT INTO UserSession ({Common.GetColumnNames<IUserSession>()}) VALUES ({Common.GetFieldNames<IUserSession>()})";            
-            using (var cnn = CreateConnection())
+
+            var query = $"INSERT INTO UserSession ({Common.GetColumnNames<IUserSession>()}) VALUES ({Common.GetFieldNames<IUserSession>()})";
+            using (var cnn = _createdDbConnection())
             {
-                var res = await cnn.ExecuteAsync(query, session);                
+                var res = await cnn.ExecuteAsync(query, session);
             }
         }
 
-        public async Task UpdateSession(IUserSession session)
+        public async Task Update(IUserSession session)
         {
             if (session == null)
                 throw new ArgumentException("UserId cannot be null", nameof(session));
@@ -47,16 +52,16 @@ namespace Repositories.Common
             fields = fields.Replace("SessionToken=@SessionToken,", "");
 
             var query = $"UPDATE UserSession SET {fields} WHERE SessionToken=@SessionToken";
-            using (var cnn = CreateConnection())
+            using (var cnn = _createdDbConnection())
             {
                 var res = await cnn.ExecuteAsync(query, session);
             }
         }
 
-        public async Task RemoveSession(string token)
+        public async Task Remove(string token)
         {
             var query = $"DELETE FROM UserSession WHERE SessionToken=@SessionToken";
-            using (var cnn = CreateConnection())
+            using (var cnn = _createdDbConnection())
             {
                 var res = await cnn.ExecuteAsync(query, new { SessionToken = token });
             }

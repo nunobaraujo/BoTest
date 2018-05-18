@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Contracts.User
+namespace Contracts
 {
     public interface IUser
-    {
-        string Id { get; }
+    {   
         string UserName { get; }
         string PasswordHash { get; }
         string FirstName { get; }
@@ -19,5 +18,6 @@ namespace Contracts.User
         string Language { get; }
         string Pin { get; }
         string Email { get; }
+        string Salt { get; }
     }
 }

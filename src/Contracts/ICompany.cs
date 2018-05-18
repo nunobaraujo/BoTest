@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Contracts.User
+namespace Contracts
 {
     public interface ICompany
     {

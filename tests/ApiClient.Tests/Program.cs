@@ -17,16 +17,16 @@ namespace ApiClient.Tests
         {
             var services = new ServiceCollection();
             var builder = new ContainerBuilder();
-            services.RegisterApiReaderClient("http://localhost:5000", "botest", "TestClient");
+            services.RegisterApiClient("http://localhost:5000", "botest", "TestClient");
             builder.Populate(services);
             var container = builder.Build();
-            var apiClient = container.Resolve<IReaderClient>();
+            var apiClient = container.Resolve<IRestClient>();
             // 0
             var sessionToken = await apiClient.SessionApi.LogIn(new LogInRequest { UserName = "sa", UserPassword = "na123456" }).Dump();
             // 1
-            var userId = await apiClient.UserApi.GetById(new GetByIdRequest { Id = "1", Token = sessionToken }).Dump();
+            var userId = await apiClient.UserApi.GetUserById(new GetByIdRequest { Id = "1", Token = sessionToken }).Dump();
             // 2
-            await apiClient.SessionApi.LogOut(new AuthenticatedRequest { Token = sessionToken }).Dump();
+            await apiClient.SessionApi.LogOut(new BearerTokenRequest { Token = sessionToken }).Dump();
 
             Console.WriteLine("All Tests Finished");
         }

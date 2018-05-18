@@ -1,29 +1,36 @@
-﻿using Dapper;
+﻿using Core.Repositories;
+using Core.Repositories.Commands.UserRepository;
 using Repositories.Common;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace Repositories.Sql
 {
-    public class UserRepository : UserRepositoryBase
+    public class UserRepository : IUserRepository
     {
         private readonly string _connString;
+        private string _encryptionKey;
+
+        public IUserCommands User { get; }
+        public ICompanyCommands Company { get; }
+        public IUserSettingsCommands UserSettings { get; }
+        public ICompanyUserCommands CompanyUser { get; }
 
         public UserRepository(string connString)
         {
             _connString = connString;
-        }
+            _encryptionKey = Core.Constants.NbSoftKey;
 
-        protected override IDbConnection CreateConnection()
-        {
-            return new SqlConnection(_connString);
+            var userRepositoryFactory = new UserRepositoryFactory(() => new SqlConnection(_connString), () => Constants.GetLastInsertedId , () => _encryptionKey);
+            User = userRepositoryFactory.CreateUserCommands();
+            Company = userRepositoryFactory.CreateCompanyCommands();
+            UserSettings = userRepositoryFactory.CreateUserSettingsCommands();
+            CompanyUser = userRepositoryFactory.CreateCompanyUserCommands();
         }
-        protected override string GetLastInsertedId()
+        
+        public void SetEncryptionKey(string encryptionKey)
         {
-            throw new NotImplementedException();
+            _encryptionKey = encryptionKey;
         }
     }
 }

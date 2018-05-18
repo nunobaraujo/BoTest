@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Core.Repositories;
 using Core.Settings;
 using NBsoft.Logs.Interfaces;

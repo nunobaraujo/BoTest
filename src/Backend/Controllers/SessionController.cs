@@ -1,5 +1,7 @@
 ﻿using Contracts;
+using Contracts.Api;
 using Contracts.Requests;
+using Core.Managers;
 using Core.Services;
 using Core.Services.Session;
 using Microsoft.AspNetCore.Authentication;
@@ -17,12 +19,11 @@ namespace Backend.Controllers
     [Route("api/[controller]")]    
     public class SessionController: Controller, ISessionApi
     {
-        private readonly IServerManagerService _serverManagerService;
-        private readonly ISessionService _sessionService;
-        public SessionController(IServerManagerService serverManagerService, ISessionService sessionService)
+        private readonly IUserManager _userManager;
+        
+        public SessionController(IUserManager userManager)
         {
-            _sessionService = sessionService;
-            _serverManagerService = serverManagerService;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -35,26 +36,15 @@ namespace Backend.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<string> LogIn([FromBody]LogInRequest request)
         {
-            return await _serverManagerService.LogIn(request.UserName, request.UserPassword, HttpContext.Connection.Id);
+            return await _userManager.LogIn(request.UserName, request.UserPassword, HttpContext.Connection.Id);
         }
         [Authorize]
         [HttpDelete]
         [SwaggerOperation("LogOut")]
         [Route("LogIn/")]        
-        public async Task LogOut([FromBody]AuthenticatedRequest request)
+        public async Task LogOut([FromBody]BearerTokenRequest request)
         {
-            await _serverManagerService.LogOut(request.Token);
+            await _userManager.LogOut(request.Token);
         }
-
-        //private static ClaimsIdentity MakeIdentity(string userId, string sessionToken)
-        //{
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim(ClaimTypes.Name, userId),
-        //        new Claim(ClaimTypes.Email, userId),
-        //        new Claim(ClaimTypes.UserData, sessionToken)
-        //    };
-        //    return new ClaimsIdentity(claims, "Cookie");
-        //}
     }
 }

@@ -1,22 +1,23 @@
-﻿using Dapper;
+﻿using Core.Repositories;
+using Core.Repositories.Commands.SessionRepository;
+using Dapper;
 using Repositories.Common;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Repositories.Sql
 {
-    public class SessionRepository : SessionRepositoryBase
+    public class SessionRepository : ISessionRepository
     {
         private readonly string _connString;
+
+        public ISessionCommands Session { get; }
 
         public SessionRepository(string connString)
         {
             _connString = connString;
-            //CreateDataBaseIfDoesntExist();
-        }
-        protected override IDbConnection CreateConnection()
-        {
-            return new SqlConnection(_connString);
+            var sessionRepositoryFactory = new SessionRepositoryFactory(() => new SqlConnection(_connString));
+            Session = sessionRepositoryFactory.CreateSessionCommands();
         }
 
         //private void CreateDataBaseIfDoesntExist()

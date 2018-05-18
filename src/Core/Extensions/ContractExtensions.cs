@@ -1,5 +1,5 @@
-﻿using Contracts.User;
-using Contracts.User.Models;
+﻿using Contracts;
+using Contracts.Models;
 
 namespace Core.Extensions
 {
@@ -16,14 +16,37 @@ namespace Core.Extensions
                 CreationDate = src.CreationDate,
                 Email = src.Email,
                 FirstName = src.FirstName,
-                Id = src.Id,
                 Language = src.Language,
                 LastName = src.LastName,
                 PasswordHash = src.PasswordHash,
                 Pin = src.Pin,
                 PostalCode = src.PostalCode,
                 Theme = src.Theme,
-                UserName = src.UserName
+                UserName = src.UserName,
+                Salt = src.Salt
+            };
+        }
+
+        public static Company ToDto(this ICompany src)
+        {
+            return new Company()
+            {   
+                Address = src.Address,
+                City = src.City,
+                Country = src.Country,
+                CreationDate = src.CreationDate,
+                PostalCode = src.PostalCode,
+                CAE = src.CAE,
+                EMail = src.EMail,
+                Fax = src.Fax,
+                IBAN = src.IBAN,
+                Id = src.Id,
+                MobilePhone = src.MobilePhone,
+                Name = src.Name,
+                Reference = src.Reference,
+                TaxIdNumber = src.TaxIdNumber,
+                Telephone = src.Telephone,
+                URL = src.URL
             };
         }
     }

@@ -1,4 +1,5 @@
-﻿using Core.Extensions;
+﻿using Core.Encryption;
+using Core.Extensions;
 using Core.Json;
 using Core.Repositories;
 using Core.Services.Session;
@@ -13,7 +14,7 @@ namespace Backend.Services
     public class SessionService : ISessionService
     {
         public const int SessionMaxAge = 86400000;     // 1 day = 86400000 milliseconds
-        public const int SessionTimeout = 300000;      // 5 minutes = 300000 milliseconds
+        public const int SessionTimeout = 900000;      // 15 minutes = 900000 milliseconds
         private const string Salt = "AA3B25E5D1CF";
         private const string IV = "FA8C5137F505310F";
 
@@ -45,7 +46,7 @@ namespace Backend.Services
                 };
                 newSession.SessionToken = GenerateToken(newSession);
                 
-                await _sessionrepository.NewSession(newSession);
+                await _sessionrepository.Session.New(newSession);
                 await _log.WriteInfoAsync(nameof(SessionService), nameof(CreateNewSession), newSession.ToJson(), "New session created");
                 return newSession.SessionToken;
             }
@@ -69,11 +70,11 @@ namespace Backend.Services
                     {
                         var editableSession = session.ToDto();
                         editableSession.LastAction = DateTime.UtcNow;
-                        await _sessionrepository.UpdateSession(editableSession);
+                        await _sessionrepository.Session.Update(editableSession);
                         return session.UserId;
                     }
                     else
-                        await _sessionrepository.RemoveSession(sessionToken);
+                        await _sessionrepository.Session.Remove(sessionToken);
                 }
                 return null;
             }
@@ -93,7 +94,7 @@ namespace Backend.Services
                 var session = await ValidateToken(sessionToken);
                 if (session != null)
                 {
-                    await _sessionrepository.RemoveSession(sessionToken);
+                    await _sessionrepository.Session.Remove(sessionToken);
                 }
             }
             catch (Exception ex)
@@ -106,19 +107,19 @@ namespace Backend.Services
         private string GenerateToken(IUserSession newSession)
         {
             string plain = $"{_settings.ApiKey};{newSession.UserId};{newSession.UserInfo};{newSession.Registered.ToString("u")}";
-            return Infrastucture.RijndaelSimple.Encrypt(plain, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
+            return RijndaelSimple.Encrypt(plain, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
         }
         private async Task<IUserSession> ValidateToken(string sessionToken)
         {
             if (string.IsNullOrEmpty(sessionToken))
                 return null;
-            var plainToken = Infrastucture.RijndaelSimple.Decrypt(sessionToken, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
+            var plainToken = RijndaelSimple.Decrypt(sessionToken, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
             if (!plainToken.StartsWith(_settings.ApiKey))
             {
                 await _log.WriteInfoAsync(nameof(SessionService), nameof(ValidateToken), sessionToken, "Invalid token");
                 return null;
             }
-            var session = await _sessionrepository.GetSession(sessionToken);
+            var session = await _sessionrepository.Session.Get(sessionToken);
             if (session != null && sessionToken != GenerateToken(session))
             {
                 await _log.WriteInfoAsync(nameof(SessionService), nameof(ValidateToken), sessionToken, "Invalid token");

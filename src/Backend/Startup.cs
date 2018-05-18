@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Backend.Extensions;
 using Backend.Infrastucture;
 using Backend.Middleware;
 using Backend.Modules;
@@ -75,7 +76,9 @@ namespace Backend
             builder.Populate(services);
 
             ApplicationContainer = builder.Build();
-
+            
+            ApplicationContainer.InitUsersRepository();
+            
             return new AutofacServiceProvider(ApplicationContainer);
         }
 

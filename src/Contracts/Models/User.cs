@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
-namespace Contracts.User.Models
+namespace Contracts.Models
 {
     public class User : IUser
-    {
-        public string Id { get; set; }
+    {   
         public string UserName { get; set; }
+        [JsonIgnore]
         public string PasswordHash { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -19,5 +20,7 @@ namespace Contracts.User.Models
         public string Language { get; set; }
         public string Pin { get; set; }
         public string Email { get; set; }
+        [JsonIgnore]
+        public string Salt { get; set; }
     }
 }

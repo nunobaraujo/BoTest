@@ -1,10 +1,10 @@
-﻿namespace Contracts.User
+﻿namespace Contracts
 {
     public interface ICompanyUser
     {
         string Id { get; }
         string CompanyId { get; }
-        string UserId { get; }
+        string UserName { get; }
         short PermissionLevel { get; }
         bool IsDefault { get; }
     }

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Backend.Infrastucture
+namespace Core.Encryption
 {
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and 
@@ -17,7 +14,7 @@ namespace Backend.Infrastucture
     /// this may not be the most efficient way of handling encryption, so - as
     /// soon as you feel comfortable with it - you may want to redesign this class.
     /// </summary>
-    static class RijndaelSimple
+    public static class RijndaelSimple
     {
         /// <summary>
         /// Encrypts specified plaintext using Rijndael symmetric key algorithm
@@ -279,5 +276,4 @@ namespace Backend.Infrastucture
             return plainText;
         }
     }
-
 }

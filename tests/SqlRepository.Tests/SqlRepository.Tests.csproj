@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Repositories.Sql\Repositories.Sql.csproj" />
+    <ProjectReference Include="..\..\src\Backend\Backend.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Backend
 {
-    static class Constants
+    public static class Constants
     {
-        public const string Salt = ("E66CD3E5B1CF");
-        public const string IV = ("BA8E98B7C5A5310F");
+        public const string AdminUserName = "sa";
     }
 }

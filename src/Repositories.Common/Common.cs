@@ -9,9 +9,28 @@ namespace Repositories.Common
             string result = string.Join(",", typeof(T).GetProperties().Select(x => x.Name));
             return result;
         }
+        public static string GetColumnNamesExceptId<T>(string idColumnName)
+        {
+            string result = string.Join(",", typeof(T).GetProperties().Select(x => x.Name))
+                .Replace($"{idColumnName},", "");
+            return result;
+        }
         public static string GetFieldNames<T>()
         {
             string result = string.Join(",", typeof(T).GetProperties().Select(x => "@" + x.Name));
+            return result;
+        }
+        public static string GetFieldNamesExceptId<T>(string idColumnName)
+        {
+            string result = string.Join(",", typeof(T).GetProperties().Select(x => "@" + x.Name))
+                .Replace($"@{idColumnName},", "");
+            return result;
+        }
+        public static string GetUpdateQueryFields<T>(string idColumnName)
+        {
+            string result = string.Join(",", typeof(T).GetProperties()
+               .Select(x => x.Name + "=@" + x.Name))
+               .Replace($"{idColumnName}=@{idColumnName},", "");
             return result;
         }
     }
