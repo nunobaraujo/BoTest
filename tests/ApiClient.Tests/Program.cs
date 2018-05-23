@@ -24,7 +24,7 @@ namespace ApiClient.Tests
             // 0
             var sessionToken = await apiClient.SessionApi.LogIn(new LogInRequest { UserName = "sa", UserPassword = "na123456" }).Dump();
             // 1
-            var userId = await apiClient.UserApi.GetUserById(new GetByIdRequest { Id = "1", Token = sessionToken }).Dump();
+            var userId = await apiClient.UserApi.Get(new GetByIdRequest { Id = "1", Token = sessionToken }).Dump();
             // 2
             await apiClient.SessionApi.LogOut(new BearerTokenRequest { Token = sessionToken }).Dump();
 

@@ -6,7 +6,7 @@ namespace Contracts.Api
 {
     public interface ISessionApi
     {
-        [Post("/api/session/LogIn")]
+        [Post("/api/session/LogIn/")]
         Task<string> LogIn([Body]LogInRequest request);
 
         [Delete("/api/session/LogIn/")]

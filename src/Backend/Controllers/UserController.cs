@@ -30,7 +30,7 @@ namespace Backend.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IUser), 200)]
-        public async Task<User> GetUserById(GetByIdRequest request)
+        public async Task<User> Get(GetByIdRequest request)
         {
             return (await _userManager.GetUserById(request.Token, request.Id))
                 .ToDto();
@@ -42,7 +42,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> AddUser([FromBody]CreateUserRequest request)
+        public async Task<string> Add([FromBody]CreateUserRequest request)
         {
             return await _userManager.CreateUser(request.UserName, request.UserPassword, request.Email);
         }
@@ -53,7 +53,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<string> UpdateUser([FromBody]UpdateUserRequest request)
+        public async Task<string> Update([FromBody]UpdateUserRequest request)
         {
             return await _userManager.UpdateUser(request.Token, request.User);
         }
@@ -64,7 +64,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task DeleteUser(GetByIdRequest request)
+        public async Task Delete(GetByIdRequest request)
         {
             await _userManager.DeleteUser(request.Token, request.Id);
         }

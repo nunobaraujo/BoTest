@@ -1,10 +1,11 @@
-﻿using Core.Repositories.Commands.UserRepository;
+﻿using Core.Repositories.Commands.CompanyRepository;
+using Repositories.Common.Commands.CompanyRepository;
 using Repositories.Common.Commands.UserRepository;
 using System;
 using System.Data;
 
 namespace Repositories.Common
-{    
+{
     public class CompanyRepositoryFactory
     {
         private readonly Func<IDbConnection> _createdDbConnection;
@@ -20,7 +21,7 @@ namespace Repositories.Common
 
         public IJobCommands CreateJobCommands()
         {
-            return new UserCommands(_createdDbConnection, _getLastCreatedId, _getEncryptionKey);
+            return new JobCommands(_createdDbConnection, _getLastCreatedId, _getEncryptionKey);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace Core.Services.Session
         Task<string> CreateNewSession(string userId, string userInfo);
         Task<string> GetUserId(string sessionToken);
         Task KillSession(string sessionToken);
-        //Task<IUserSession> ValidateToken(string sessionToken);
+        Task<IUserSession> GetSession(string sessionToken);
     }
 }

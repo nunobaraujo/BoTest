@@ -15,11 +15,13 @@ namespace Backend.Managers
     {
         private readonly ISessionService _sessionService;
         private readonly IUserRepository _userRepository;
+        private readonly ICompanyRepositoryResolver _companyRepositoryResolver;
 
-        public UserManager(ISessionService sessionService, IUserRepository userRepository)
+        public UserManager(ISessionService sessionService, IUserRepository userRepository, ICompanyRepositoryResolver companyRepositoryResolver)
         {
             _sessionService = sessionService;
             _userRepository = userRepository;
+            _companyRepositoryResolver = companyRepositoryResolver;
         }
 
         public async Task<string> LogIn(string userName, string password, string userInfo)
@@ -48,15 +50,16 @@ namespace Backend.Managers
                 var companies = await GetCompaniesByUserName(userId);
                 var lastUsedId = companies.First().CompanyId;
                 var defaultCompany = companies.FirstOrDefault(x => x.IsDefault);
-                if (defaultCompany == null)
+                if (defaultCompany != null)
                     lastUsedId = defaultCompany.CompanyId;
 
                 await _userRepository.UserSettings.Add(new UserSettings { UserName = userId, LastOpenCompanyId = lastUsedId });
+                lastUsed = await _userRepository.UserSettings.Get(userId);
             }
 
+            string sessionInfo = $"{lastUsed.LastOpenCompanyId};{userInfo}";
 
-            
-            return await _sessionService.CreateNewSession(userId, userInfo);
+            return await _sessionService.CreateNewSession(userId, sessionInfo);
         }
 
         public async Task LogOut(string sessionToken)
@@ -164,6 +167,13 @@ namespace Backend.Managers
 
             return (await _userRepository.User.GetCompanies(userName))
                 .ToList();
+        }
+
+        public async Task<ICompanyRepository> ResolveRepository(string sessionToken)
+        {
+            var session = await _sessionService.GetSession(sessionToken);
+            var activeCompanyId = session.UserInfo.Split(";").First();
+            return _companyRepositoryResolver.Resolve(activeCompanyId);
         }
     }
 }

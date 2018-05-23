@@ -49,5 +49,36 @@ namespace Core.Extensions
                 URL = src.URL
             };
         }
+
+        public static Job ToDto(this IJob src)
+        {
+            return new Job
+            {
+                BeginDate = src.BeginDate,
+                ClientRef = src.ClientRef,
+                CreationDate = src.CreationDate,
+                CurrentState = src.CurrentState,
+                CustomerId = src.CustomerId,
+                CustomerRouteId = src.CustomerRouteId,
+                Description = src.Description,
+                FinishDate = src.FinishDate,
+                Id = src.Id,
+                JobReference = src.JobReference,
+                Notes = src.Notes,
+                Option1 = src.Option1,
+                Option2 = src.Option2,
+                Option3 = src.Option3,
+                Option4 = src.Option4,
+                Option5 = src.Option5,
+                Option6 = src.Option6,
+                ProductHeight = src.ProductHeight,
+                ProductId = src.ProductId,
+                ProductLength = src.ProductLength,
+                ProductUnitType = src.ProductUnitType,
+                ProductWidth = src.ProductWidth,
+                TotalValue = src.TotalValue,
+                UserId = src.UserId
+            };
+        }
     }
 }

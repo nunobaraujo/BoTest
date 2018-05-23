@@ -22,8 +22,13 @@ namespace Backend.Modules
             builder.Register<ISessionRepository>(c => new SessionRepository(_backendSetting.Db.SessionConnString))
                 .SingleInstance();
 
-            builder.Register<IUserRepository>(c => new UserRepository(_backendSetting.Db.UserConnString))
+            IUserRepository userRepo = new UserRepository(_backendSetting.Db.UserConnString);
+            builder.RegisterInstance(userRepo);
+
+            builder.Register<ICompanyRepositoryResolver>(c => new CompanyRepositoryResolver(_backendSetting.Db.CompanyConnString, userRepo))
                 .SingleInstance();
+
+            
         }
     }
 }

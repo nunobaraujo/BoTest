@@ -21,22 +21,22 @@ namespace Backend.Controllers
         {
         }
         [HttpPost]
-        public Task<string> AddCompany([FromBody] CompanyRequest request)
+        public Task<string> Add([FromBody] CompanyRequest request)
         {
             throw new NotImplementedException();
         }
         [HttpDelete]
-        public Task<string> DeleteCompany(GetByIdRequest request)
+        public Task<string> Delete(GetByIdRequest request)
         {
             throw new NotImplementedException();
         }
         [HttpGet]
-        public Task<Company> GetCompanyById(GetByIdRequest request)
+        public Task<Company> Get(GetByIdRequest request)
         {
             throw new NotImplementedException();
         }
         [HttpPut]
-        public Task<string> UpdateCompany([FromBody] CompanyRequest request)
+        public Task<string> Update([FromBody] CompanyRequest request)
         {
             throw new NotImplementedException();
         }

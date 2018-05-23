@@ -1,11 +1,7 @@
 ﻿using Core.Repositories;
 using Core.Repositories.Commands.CompanyRepository;
 using Repositories.Common;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace Repositories.Sql
 {

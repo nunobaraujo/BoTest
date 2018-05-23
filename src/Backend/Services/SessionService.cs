@@ -59,30 +59,8 @@ namespace Backend.Services
                
         public async Task<string> GetUserId(string sessionToken)
         {
-            if (string.IsNullOrEmpty(sessionToken))
-                throw new ArgumentException("Value cannot be empty", nameof(sessionToken));
-            try
-            {
-                var session = await ValidateToken(sessionToken);
-                if (session != null)
-                {
-                    if (IsValidSession(session))
-                    {
-                        var editableSession = session.ToDto();
-                        editableSession.LastAction = DateTime.UtcNow;
-                        await _sessionrepository.Session.Update(editableSession);
-                        return session.UserId;
-                    }
-                    else
-                        await _sessionrepository.Session.Remove(sessionToken);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                await _log.WriteErrorAsync(nameof(SessionService), nameof(GetUserId), null, ex);
-                throw;
-            }
+            var session = await GetSession(sessionToken);
+            return session?.UserId;
         }
 
         public async Task KillSession(string sessionToken)
@@ -95,6 +73,36 @@ namespace Backend.Services
                 if (session != null)
                 {
                     await _sessionrepository.Session.Remove(sessionToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(SessionService), nameof(GetUserId), null, ex);
+                throw;
+            }
+        }
+
+        public async Task<IUserSession> GetSession(string sessionToken)
+        {
+            if (string.IsNullOrEmpty(sessionToken))
+                throw new ArgumentException("Value cannot be empty", nameof(sessionToken));
+            try
+            {
+                var session = await ValidateToken(sessionToken);
+                if (session == null)
+                    return null;
+
+                if (IsValidSession(session))
+                {
+                    var editableSession = session.ToDto();
+                    editableSession.LastAction = DateTime.UtcNow;
+                    await _sessionrepository.Session.Update(editableSession);
+                    return session;
+                }
+                else
+                {
+                    await _sessionrepository.Session.Remove(sessionToken);
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -148,7 +156,8 @@ namespace Backend.Services
             return true;
 
         }
-                
+
+        
     }
     
 }

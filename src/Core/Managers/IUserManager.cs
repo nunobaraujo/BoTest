@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Core.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,5 +19,7 @@ namespace Core.Managers
         Task SetPassword(string sessionToken, string password);
 
         Task<List<ICompanyUser>> GetCompanies(string sessionToken);
+
+        Task<ICompanyRepository> ResolveRepository(string sessionToken);
     }
 }
