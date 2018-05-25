@@ -11,5 +11,11 @@ namespace Contracts.Api
 
         [Delete("/api/session/LogIn/")]
         Task LogOut([Body]BearerTokenRequest request);
+
+        [Get("/api/session/ActiveCompany/")]
+        Task<string> GetActiveCompany(BearerTokenRequest request);
+
+        [Post("/api/session/ActiveCompany/")]
+        Task SetActiveCompany([Body]GetByIdRequest request);
     }
 }

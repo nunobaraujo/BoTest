@@ -73,7 +73,7 @@ namespace Repositories.Common.Commands.UserRepository
 
         public async Task<string> Update(IUserSettings userSettings)
         {
-            if (userSettings == null || userSettings.UserName == null)
+            if (userSettings == null || userSettings.UserName == null || userSettings.LastOpenCompanyId == null)
                 throw new ArgumentNullException(nameof(userSettings));
 
             using (var cnn = _createdDbConnection())

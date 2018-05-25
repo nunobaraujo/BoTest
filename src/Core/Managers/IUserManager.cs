@@ -21,5 +21,8 @@ namespace Core.Managers
         Task<List<ICompanyUser>> GetCompanies(string sessionToken);
 
         Task<ICompanyRepository> ResolveRepository(string sessionToken);
+
+        Task<ICompany> GetActiveCompany(string sessionToken);
+        Task<ICompany> SetActiveCompany(string sessionToken, string companyId);
     }
 }

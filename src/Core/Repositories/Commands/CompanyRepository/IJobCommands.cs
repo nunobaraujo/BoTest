@@ -1,4 +1,6 @@
 ﻿using Contracts;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Core.Repositories.Commands.CompanyRepository
@@ -9,5 +11,9 @@ namespace Core.Repositories.Commands.CompanyRepository
         Task<string> Add(IJob job);
         Task<string> Update(IJob job);
         Task Delete(string jobId);
+
+        Task<IList<IJob>> GetByDate(DateTime from, DateTime to);
+        Task<IList<IJob>> GetByCustomer(string customerId);
+        
     }
 }

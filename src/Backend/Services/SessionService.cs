@@ -114,7 +114,7 @@ namespace Backend.Services
 
         private string GenerateToken(IUserSession newSession)
         {
-            string plain = $"{_settings.ApiKey};{newSession.UserId};{newSession.UserInfo};{newSession.Registered.ToString("u")}";
+            string plain = $"{_settings.ApiKey};{newSession.UserId};{newSession.Registered.ToString("u")}";
             return RijndaelSimple.Encrypt(plain, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
         }
         private async Task<IUserSession> ValidateToken(string sessionToken)
@@ -157,7 +157,23 @@ namespace Backend.Services
 
         }
 
-        
+        public async Task UpdateSessionUserInfo(string sessionToken, string userInfo)
+        {
+            if (string.IsNullOrEmpty(sessionToken))
+                throw new ArgumentException("Value cannot be empty", nameof(sessionToken));
+
+            if (string.IsNullOrEmpty(userInfo))
+                throw new ArgumentException("Value cannot be empty", nameof(userInfo));
+
+            var session = await ValidateToken(sessionToken);
+            if (session == null)
+                throw new UnauthorizedAccessException("Invalid token");
+
+            var editableSession = session.ToDto();
+            editableSession.LastAction = DateTime.UtcNow;
+            editableSession.UserInfo= userInfo;
+            await _sessionrepository.Session.Update(editableSession);
+        }
     }
     
 }

@@ -8,5 +8,6 @@ namespace Core.Services.Session
         Task<string> GetUserId(string sessionToken);
         Task KillSession(string sessionToken);
         Task<IUserSession> GetSession(string sessionToken);
+        Task UpdateSessionUserInfo(string sessionToken, string userInfo);
     }
 }

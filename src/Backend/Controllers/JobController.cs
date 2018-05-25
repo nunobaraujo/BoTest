@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Managers;
 using Core.Extensions;
+using System.Linq;
 
 namespace Backend.Controllers
 {
@@ -50,7 +51,7 @@ namespace Backend.Controllers
         }
                 
         [HttpPost("/GetByCustomer/")]
-        public Task<List<Job>> GetByCustomer(GetByIdRequest request)
+        public async Task<List<Job>> GetByCustomer(GetByIdRequest request)
         {
             throw new NotImplementedException();
         }
@@ -62,9 +63,15 @@ namespace Backend.Controllers
         }
 
         [HttpPost("/GetByDate/")]
-        public Task<List<Job>> GetByDate(GetByDateRequest request)
+        public async Task<List<Job>> GetByDate(GetByDateRequest request)
         {
-            throw new NotImplementedException();
+            var repo = await _userManager.ResolveRepository(request.Token);
+            if (repo != null)
+                return (await repo.Job.GetByDate(request.DateFrom, request.DateTo))
+                    .Select(x => x.ToDto())
+                    .ToList();
+                    
+            return null;
         }
 
         

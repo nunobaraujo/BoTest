@@ -172,8 +172,41 @@ namespace Backend.Managers
         public async Task<ICompanyRepository> ResolveRepository(string sessionToken)
         {
             var session = await _sessionService.GetSession(sessionToken);
+            if (session== null )
+                throw new Exception("Invalid session token");
             var activeCompanyId = session.UserInfo.Split(";").First();
             return _companyRepositoryResolver.Resolve(activeCompanyId);
+        }
+
+        public async Task<ICompany> GetActiveCompany(string sessionToken)
+        {
+            var session = await _sessionService.GetSession(sessionToken);
+            if (session == null)
+                throw new Exception("Invalid session token");
+            var activeCompanyId = session.UserInfo.Split(";").First();
+            return await _userRepository.Company.Get(activeCompanyId);
+        }
+
+        public async Task<ICompany> SetActiveCompany(string sessionToken, string companyId)
+        {
+            var session = await _sessionService.GetSession(sessionToken);
+            if (session == null)
+                throw new Exception("Invalid session token");
+
+            var companies = await GetCompaniesByUserName(session.UserId);
+            var company = companies.FirstOrDefault(c => c.CompanyId == companyId);
+            if (company == null || company.PermissionLevel < 1)
+                throw new UnauthorizedAccessException("No Access to company");
+            
+            // Update Session Token
+            var userInfo = session.UserInfo.Split(";");
+            userInfo[0] = companyId;
+            await _sessionService.UpdateSessionUserInfo(sessionToken, string.Join(";", userInfo));
+
+            // Update user Settings
+            await _userRepository.UserSettings.Update(new UserSettings { UserName = session.UserId, LastOpenCompanyId = companyId });
+
+            return await _userRepository.Company.Get(companyId);
         }
     }
 }

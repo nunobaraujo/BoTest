@@ -3,6 +3,7 @@ using Contracts.Models;
 using Core.Repositories.Commands.CompanyRepository;
 using Dapper;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,5 +48,21 @@ namespace Repositories.Common.Commands.CompanyRepository
             throw new NotImplementedException();
         }
 
+
+        public async Task<IList<IJob>> GetByDate(DateTime from, DateTime to)
+        {
+            var query = $"SELECT {Common.GetColumnNames<IJob>()} FROM [Job] WHERE CreationDate >= @DateFrom AND CreationDate <= @DateTo";
+            using (var cnn = _createdDbConnection())
+            {
+                return (await cnn.QueryAsync<Job>(query, new { DateFrom = from, DateTo = to }))
+                    .Cast<IJob>()
+                    .ToList();
+            }
+        }
+
+        public async Task<IList<IJob>> GetByCustomer(string customerId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

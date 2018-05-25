@@ -26,6 +26,7 @@ namespace Backend.Controllers
             _userManager = userManager;
         }
 
+        
         /// <summary>
         /// Checks service is alive
         /// </summary>
@@ -45,6 +46,23 @@ namespace Backend.Controllers
         public async Task LogOut([FromBody]BearerTokenRequest request)
         {
             await _userManager.LogOut(request.Token);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [SwaggerOperation("GetActiveCompany")]
+        [Route("ActiveCompany/")]
+        public async Task<string> GetActiveCompany(BearerTokenRequest request)
+        {
+            return (await _userManager.GetActiveCompany(request.Token)).Id;
+        }
+        [Authorize]
+        [HttpPost]
+        [SwaggerOperation("SetActiveCompany")]
+        [Route("ActiveCompany/")]
+        public async Task SetActiveCompany([FromBody] GetByIdRequest request)
+        {
+            await _userManager.SetActiveCompany(request.Token, request.Id);
         }
     }
 }
