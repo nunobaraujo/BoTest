@@ -11,10 +11,16 @@ namespace Contracts.Api
     public interface IJobApi
     {
         /// <summary>
-        /// Get job by id
+        /// Get job list
         /// </summary>
         [Get("/api/job/")]
-        Task<Job> Get(GetByIdRequest request);
+        Task<List<Job>> List(BearerTokenRequest request);
+
+        /// <summary>
+        /// Get job by id
+        /// </summary>
+        [Get("/api/job/{jobId}")]
+        Task<Job> Get(string jobId, BearerTokenRequest request);
         /// <summary>
         /// Create new job
         /// </summary>
@@ -24,32 +30,32 @@ namespace Contracts.Api
         /// <summary>
         /// Update job
         /// </summary>
-        [Put("/api/job/")]
-        Task<string> Update([Body]JobRequest request);
+        [Put("/api/job/{jobId}")]
+        Task<string> Update(string jobId, [Body]JobRequest request);
 
         /// <summary>
         /// Delete job
         /// </summary>
-        [Delete("/api/job/")]
-        Task Delete([Body]GetByIdRequest request);
+        [Delete("/api/job/{jobId}")]
+        Task Delete(string jobId, [Body]BearerTokenRequest request);
 
         /// <summary>
         /// Get jobs by customer
         /// </summary>
-        [Post("/api/job/GetByCustomer/")]
-        Task<List<Job>> GetByCustomer(GetByIdRequest request);
+        [Post("/api/job/GetByCustomer/{customerId}")]
+        Task<List<Job>> GetByCustomer(string customerId, [Body]BearerTokenRequest request);
 
         /// <summary>
         /// Get jobs by customer route
         /// </summary>
-        [Post("/api/job/GetByCustomerRoute/")]
-        Task<List<Job>> GetByCustomerRoute(GetByIdRequest request);
+        [Post("/api/job/GetByCustomerRoute/{customerRouteId}")]
+        Task<List<Job>> GetByCustomerRoute(string customerRouteId, [Body]BearerTokenRequest request);
 
         /// <summary>
         /// Get jobs by customer route
         /// </summary>
         [Post("/api/job/GetByDate/")]
-        Task<List<Job>> GetByDate(GetByDateRequest request);
+        Task<List<Job>> GetByDate([Body]DateIntervalRequest  request);
 
     }
 }

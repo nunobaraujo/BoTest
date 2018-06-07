@@ -20,5 +20,6 @@ namespace Contracts
         string Country { get; }
         string CAE { get; }
         string IBAN { get; }
+        bool Encrypted { get; }
     }
 }

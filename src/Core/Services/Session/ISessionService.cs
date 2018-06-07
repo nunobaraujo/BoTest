@@ -4,10 +4,10 @@ namespace Core.Services.Session
 {
     public interface ISessionService
     {
-        Task<string> CreateNewSession(string userId, string userInfo);
+        Task<string> CreateNewSession(string userId, string userInfo, string activeCompany);
         Task<string> GetUserId(string sessionToken);
         Task KillSession(string sessionToken);
         Task<IUserSession> GetSession(string sessionToken);
-        Task UpdateSessionUserInfo(string sessionToken, string userInfo);
+        Task UpdateSessionUserInfo(string sessionToken, string activeCompany);
     }
 }

@@ -13,7 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Repositories.Common\Repositories.Common.csproj" />
+    <PackageReference Include="NBsoft.Logs.Sql" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Repositories.Common\Repositories.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,8 @@ namespace Core.Repositories.Commands.UserRepository
 {
     public interface IUserCommands
     {
+        Task<IEnumerable<IUser>> List();
+
         Task<IUser> Get(string userName);
         Task<IUser> GetByEmail(string email);
 
@@ -14,8 +16,10 @@ namespace Core.Repositories.Commands.UserRepository
         Task SetPassword(string userId, string password);
         IUser GeneratePassword(IUser user, string password);
 
-        Task<string> Add(IUser user);
-        Task<string> Update(IUser user);
+        Task<IUser> Add(IUser user);
+        Task<IUser> Update(IUser user);
         Task Delete(string userName);
+
+        Task<IEnumerable<string>> UpdateBatch(IEnumerable<IUser> users);
     }
 }

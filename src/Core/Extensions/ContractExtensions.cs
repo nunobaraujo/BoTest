@@ -23,7 +23,8 @@ namespace Core.Extensions
                 PostalCode = src.PostalCode,
                 Theme = src.Theme,
                 UserName = src.UserName,
-                Salt = src.Salt
+                Salt = src.Salt,
+                Encrypted = src.Encrypted
             };
         }
 
@@ -46,7 +47,8 @@ namespace Core.Extensions
                 Reference = src.Reference,
                 TaxIdNumber = src.TaxIdNumber,
                 Telephone = src.Telephone,
-                URL = src.URL
+                URL = src.URL,
+                Encrypted = src.Encrypted
             };
         }
 

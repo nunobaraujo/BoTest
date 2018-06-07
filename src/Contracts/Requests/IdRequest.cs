@@ -1,6 +1,6 @@
 ﻿namespace Contracts.Requests
 {
-    public class GetByIdRequest: BearerTokenRequest
+    public class IdRequest: BearerTokenRequest
     {
         public string Id { get; set; }        
     }

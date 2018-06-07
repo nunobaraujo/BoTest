@@ -1,8 +1,7 @@
 ﻿using Core.Repositories;
 using Core.Repositories.Commands.SessionRepository;
-using Dapper;
+using NBsoft.Logs.Interfaces;
 using Repositories.Common;
-using System.Data;
 using System.Data.SqlClient;
 
 namespace Repositories.Sql
@@ -10,13 +9,15 @@ namespace Repositories.Sql
     public class SessionRepository : ISessionRepository
     {
         private readonly string _connString;
+        private readonly ILogger _log;
 
         public ISessionCommands Session { get; }
 
-        public SessionRepository(string connString)
+        public SessionRepository(string connString, ILogger log)
         {
             _connString = connString;
-            var sessionRepositoryFactory = new SessionRepositoryFactory(() => new SqlConnection(_connString));
+            _log = log;
+            var sessionRepositoryFactory = new SessionRepositoryFactory(() => new SqlConnection(_connString), _log);
             Session = sessionRepositoryFactory.CreateSessionCommands();
         }
 

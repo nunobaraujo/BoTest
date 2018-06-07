@@ -16,7 +16,7 @@ namespace SqlRepository.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _userRepository = new UserRepository("Server=.\\sqlexpress1;Database=BoTest;User Id=sa;Password=na123456;");
+            _userRepository = new UserRepository("Server=.\\sqlexpress1;Database=BoTest;User Id=sa;Password=na123456;", null);
         }
 
 
@@ -42,16 +42,16 @@ namespace SqlRepository.Tests
             };
 
             // CREATE
-            var userName = await _userRepository.User.Add(newUser);
-            Assert.IsNotNull(userName);
+            var user1 = await _userRepository.User.Add(newUser);
+            Assert.IsNotNull(user1);
             // READ
-            var createdUser = await _userRepository.User.Get(userName);
-            Assert.AreEqual(createdUser.UserName, userName);
+            var createdUser = await _userRepository.User.Get(user1.UserName);
+            Assert.AreEqual(createdUser.UserName, user1);
             // UPDATE
             var updatedUser = createdUser.ToDto();
             updatedUser.Pin = "9876";
             await _userRepository.User.Update(updatedUser);
-            createdUser = await _userRepository.User.Get(userName);
+            createdUser = await _userRepository.User.Get(user1.UserName);
             Assert.AreEqual(createdUser.Pin, updatedUser.Pin);
             // DELETE
             await _userRepository.User.Delete(updatedUser.UserName);

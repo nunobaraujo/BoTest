@@ -19,13 +19,13 @@ namespace Backend.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register<ISessionRepository>(c => new SessionRepository(_backendSetting.Db.SessionConnString))
+            builder.Register<ISessionRepository>(c => new SessionRepository(_backendSetting.Db.SessionConnString, _log))
                 .SingleInstance();
 
-            IUserRepository userRepo = new UserRepository(_backendSetting.Db.UserConnString);
+            IUserRepository userRepo = new UserRepository(_backendSetting.Db.UserConnString, _log);
             builder.RegisterInstance(userRepo);
 
-            builder.Register<ICompanyRepositoryResolver>(c => new CompanyRepositoryResolver(_backendSetting.Db.CompanyConnString, userRepo))
+            builder.Register<ICompanyRepositoryResolver>(c => new CompanyRepositoryResolver(_backendSetting.Db.CompanyConnString, userRepo, _log))
                 .SingleInstance();
 
             

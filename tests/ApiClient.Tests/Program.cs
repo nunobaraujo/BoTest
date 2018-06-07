@@ -6,6 +6,7 @@ using Autofac.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Contracts.Requests;
+using System.Linq;
 
 namespace ApiClient.Tests
 {
@@ -15,6 +16,7 @@ namespace ApiClient.Tests
 
         static async Task Main(string[] args)
         {
+            System.Threading.Thread.Sleep(5000);
             var services = new ServiceCollection();
             var builder = new ContainerBuilder();
             services.RegisterApiClient("http://localhost:5000", "botest", "TestClient");
@@ -22,13 +24,53 @@ namespace ApiClient.Tests
             var container = builder.Build();
             var apiClient = container.Resolve<IRestClient>();
             // 0
-            var sessionToken = await apiClient.SessionApi.LogIn(new LogInRequest { UserName = "sa", UserPassword = "na123456" }).Dump();
+            var sessionToken = await apiClient.SessionApi.LogIn(new LogInRequest { UserName = "sa", UserPassword = "#Na123" }).Dump();
             // 1
-            var userId = await apiClient.UserApi.Get(new GetByIdRequest { Id = "1", Token = sessionToken }).Dump();
-            // 2
+            var userId = await apiClient.UserApi.Get(new IdRequest { Id = "1", Token = sessionToken }).Dump();
+
+            await JobTests(apiClient, sessionToken);
+
+            // Last
             await apiClient.SessionApi.LogOut(new BearerTokenRequest { Token = sessionToken }).Dump();
 
             Console.WriteLine("All Tests Finished");
+        }
+
+        private static async Task JobTests(IRestClient apiClient, string sessionToken)
+        {
+            var btoken = new BearerTokenRequest { Token = sessionToken };
+            var jobs = await apiClient.JobApi.List(btoken);
+            var lastJob = await apiClient.JobApi.Get(jobs.Where(x => x.CustomerRouteId != null).Last().Id, btoken).Dump();
+
+            var job = new Contracts.Models.Job
+            {
+                Id = Guid.NewGuid().ToString(),
+                CustomerId = lastJob.CustomerId,
+                CustomerRouteId = lastJob.CustomerRouteId,
+                ProductId = lastJob.ProductId,
+                UserId = lastJob.UserId,
+                CreationDate = DateTime.UtcNow,
+                BeginDate = DateTime.UtcNow,
+                Description ="test job",
+                CurrentState =  0,
+                ClientRef = "cref",
+                JobReference =  "TestJobRef",
+                Notes = "New Notes"
+            };
+            var newJob = await apiClient.JobApi.Add(new JobRequest { Token = sessionToken, Job = job }).Dump();
+            var savedJob = await apiClient.JobApi.Get(newJob, btoken);
+            savedJob.Notes = "Edited Notes";
+            await apiClient.JobApi.Update(savedJob.Id, new JobRequest { Token = sessionToken, Job = savedJob }).Dump();
+            var savedJob2 = await apiClient.JobApi.Get(newJob, btoken).Dump();
+            if (savedJob2.Notes != savedJob.Notes)
+                Console.WriteLine("Update JObe Failed");
+
+
+            var dateList = await apiClient.JobApi.GetByDate(new DateIntervalRequest  { DateFrom = DateTime.UtcNow.AddDays(-1), DateTo = DateTime.UtcNow.AddDays(1), Token = sessionToken }).Dump();
+            var clientList = await apiClient.JobApi.GetByCustomer(savedJob2.CustomerId, btoken).Dump();
+            var clientRouteList = await apiClient.JobApi.GetByCustomerRoute(savedJob2.CustomerRouteId, btoken).Dump();
+            await apiClient.JobApi.Delete(savedJob2.Id, btoken).Dump();
+
         }
 
         public static T Dump<T>(this T o)

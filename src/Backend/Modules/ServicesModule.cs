@@ -4,9 +4,11 @@ using Backend.Middleware.Validator;
 using Backend.Services;
 using Core.Managers;
 using Core.Services;
+using Core.Services.License;
 using Core.Services.Session;
 using Core.Settings;
 using NBsoft.Logs.Interfaces;
+using Services.Comms.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +36,22 @@ namespace Backend.Modules
                 .As<ISessionService>()
                 .SingleInstance();
 
+            builder.RegisterType<LicenseService>()
+                .As<ILicenseService>()
+                .SingleInstance();
+
             builder.RegisterType<UserManager>()
                 .As<IUserManager>()
                 .SingleInstance();
+
+            var endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, _backendSetting.SocketPort);
+            builder.RegisterType<SocketHost>()
+                .WithParameter(new NamedParameter("endPoint", endpoint))
+                .SingleInstance()
+                .AutoActivate();
+
+            
         }
+        
     }
 }

@@ -3,6 +3,7 @@ using Contracts.Models;
 using Core.Extensions;
 using Core.Managers;
 using Core.Repositories;
+using Core.Services.License;
 using Core.Services.Session;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace Backend.Managers
     {
         private readonly ISessionService _sessionService;
         private readonly IUserRepository _userRepository;
+        private readonly ILicenseService _licenseService;
         private readonly ICompanyRepositoryResolver _companyRepositoryResolver;
 
-        public UserManager(ISessionService sessionService, IUserRepository userRepository, ICompanyRepositoryResolver companyRepositoryResolver)
+        public UserManager(ISessionService sessionService, ILicenseService licenseService, IUserRepository userRepository, ICompanyRepositoryResolver companyRepositoryResolver)
         {
             _sessionService = sessionService;
+            _licenseService = licenseService;
             _userRepository = userRepository;
             _companyRepositoryResolver = companyRepositoryResolver;
         }
@@ -56,10 +59,8 @@ namespace Backend.Managers
                 await _userRepository.UserSettings.Add(new UserSettings { UserName = userId, LastOpenCompanyId = lastUsedId });
                 lastUsed = await _userRepository.UserSettings.Get(userId);
             }
-
-            string sessionInfo = $"{lastUsed.LastOpenCompanyId};{userInfo}";
-
-            return await _sessionService.CreateNewSession(userId, sessionInfo);
+            
+            return await _sessionService.CreateNewSession(userId, userInfo, lastUsed.LastOpenCompanyId);
         }
 
         public async Task LogOut(string sessionToken)
@@ -67,7 +68,7 @@ namespace Backend.Managers
             await _sessionService.KillSession(sessionToken);
         }
 
-        public async Task<string> CreateUser(string userName, string password, string email)
+        public async Task<IUser> CreateUser(string userName, string password, string email)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
                 throw new ArgumentException($"{nameof(userName)}, {nameof(password)} and {nameof(email)} cannot be empty.");
@@ -99,16 +100,24 @@ namespace Backend.Managers
 
         public async Task<IUser> GetUserById(string sessionToken, string userId)
         {
+            // Find by UserName
+            var user  = await _userRepository.User.Get(userId);
+            // Then find by Email
+            if (user == null)
+                user = await _userRepository.User.GetByEmail(userId);
+            if (user == null)
+                return null;
+
             // Only sa user has access to all users.
             // all other users can on request userInfo from their own user.
-            var sessionUserId = await _sessionService.GetUserId(sessionToken);
-            var sessionUser = await _userRepository.User.Get(sessionUserId);
-            if (sessionUser.UserName == Core.Constants.AdminUser || sessionUserId == userId)
-                return await _userRepository.User.Get(userId);
+            var sessionUserName = await _sessionService.GetUserId(sessionToken);
+            var sessionUser = await _userRepository.User.Get(sessionUserName);
+            if (sessionUser.UserName == Core.Constants.AdminUser || sessionUserName == user.UserName)
+                return user;
             else
                 throw new UnauthorizedAccessException($"No access to user {userId}");
         }        
-        public async Task<string> UpdateUser(string sessionToken, IUser user)
+        public async Task<IUser> UpdateUser(string sessionToken, IUser user)
         {
             var sessionUserId = await _sessionService.GetUserId(sessionToken);
             if (sessionUserId == null)
@@ -169,12 +178,20 @@ namespace Backend.Managers
                 .ToList();
         }
 
+        public async Task<IUserRepository> GetUserRepository(string sessionToken)
+        {
+            var session = await _sessionService.GetSession(sessionToken);
+            if (session == null)
+                throw new Exception("Invalid session token");
+            return _userRepository;
+        }
         public async Task<ICompanyRepository> ResolveRepository(string sessionToken)
         {
+            // TODO: _licenseService validate license company license            
             var session = await _sessionService.GetSession(sessionToken);
             if (session== null )
                 throw new Exception("Invalid session token");
-            var activeCompanyId = session.UserInfo.Split(";").First();
+            var activeCompanyId = session.ActiveCompany;
             return _companyRepositoryResolver.Resolve(activeCompanyId);
         }
 
@@ -183,7 +200,7 @@ namespace Backend.Managers
             var session = await _sessionService.GetSession(sessionToken);
             if (session == null)
                 throw new Exception("Invalid session token");
-            var activeCompanyId = session.UserInfo.Split(";").First();
+            var activeCompanyId = session.ActiveCompany;
             return await _userRepository.Company.Get(activeCompanyId);
         }
 
@@ -199,14 +216,23 @@ namespace Backend.Managers
                 throw new UnauthorizedAccessException("No Access to company");
             
             // Update Session Token
-            var userInfo = session.UserInfo.Split(";");
-            userInfo[0] = companyId;
-            await _sessionService.UpdateSessionUserInfo(sessionToken, string.Join(";", userInfo));
+                        
+            await _sessionService.UpdateSessionUserInfo(sessionToken, companyId);
 
             // Update user Settings
             await _userRepository.UserSettings.Update(new UserSettings { UserName = session.UserId, LastOpenCompanyId = companyId });
 
             return await _userRepository.Company.Get(companyId);
+        }
+
+        public Task<ILicense> GetLicense(string sessionToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetLicense(string sessionToken, ILicense license)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services
+namespace SocketClient
 {
     public class Class1
     {

@@ -12,24 +12,24 @@ namespace Contracts.Api
         /// Get user by id
         /// </summary>
         [Get("/api/user/")]
-        Task<Models.User> Get(GetByIdRequest request);
+        Task<IUser> Get(IdRequest request);
         /// <summary>
         /// Create new user
         /// </summary>
         [Post("/api/user/")]
-        Task<string> Add([Body]CreateUserRequest request);
+        Task<IUser> Add([Body]CreateUserRequest request);
 
         /// <summary>
         /// Update user info
         /// </summary>
         [Put("/api/user/")]
-        Task<string> Update([Body]UpdateUserRequest request);
+        Task<IUser> Update([Body]UserRequest request);
 
         /// <summary>
         /// Delete user
         /// </summary>
         [Delete("/api/user/")]
-        Task Delete(GetByIdRequest request);
+        Task Delete(IdRequest request);
 
         /// <summary>
         /// Change User Password

@@ -2,7 +2,7 @@
 
 namespace Contracts.Requests
 {
-    public class GetByDateRequest: BearerTokenRequest
+    public class DateIntervalRequest : BearerTokenRequest
     {
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }

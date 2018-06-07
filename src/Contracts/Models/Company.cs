@@ -20,5 +20,6 @@ namespace Contracts.Models
         public string Country { get; set; }
         public string CAE { get; set; }
         public string IBAN { get; set; }
+        public bool Encrypted { get; set; }
     }
 }

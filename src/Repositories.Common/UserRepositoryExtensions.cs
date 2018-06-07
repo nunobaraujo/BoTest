@@ -19,7 +19,7 @@ namespace Repositories.Common
             if (string.IsNullOrEmpty(salt))
                 throw new ArgumentNullException(nameof(salt));
 
-            return Core.Common.SHA1Encrypt(plainText, encryptionKey, salt, IV);
+            return Services.Encryptor.SHA1Encrypt(plainText, encryptionKey, salt, IV);
         }
         private static string Decrypt(string encryptedText, string encryptionKey, string salt)
         {
@@ -30,7 +30,7 @@ namespace Repositories.Common
             if (string.IsNullOrEmpty(salt))
                 throw new ArgumentNullException(nameof(salt));
 
-            return Core.Common.SHA1Decrypt(encryptedText, encryptionKey, salt, IV);
+            return Services.Encryptor.SHA1Decrypt(encryptedText, encryptionKey, salt, IV);
         }
 
         internal static void SetPassword(this User src, string password, string encryptionKey)
@@ -59,6 +59,8 @@ namespace Repositories.Common
         }
         internal static IUser DecryptUser(this IUser src, string encryptionKey)
         {
+            if (!src.Encrypted)
+                return src;
             var decrypted = src.ToDto();
             decrypted.Address = src.Address.DecryptDPString(encryptionKey);
             decrypted.City = src.City.DecryptDPString(encryptionKey);
@@ -86,6 +88,9 @@ namespace Repositories.Common
         }
         internal static ICompany DecryptCompany(this ICompany src, string encryptionKey)
         {
+            if (!src.Encrypted)
+                return src;
+
             var decrypted = src.ToDto();
             decrypted.Name = src.Name.DecryptDPString(encryptionKey);
             decrypted.Address = src.Address.DecryptDPString(encryptionKey);

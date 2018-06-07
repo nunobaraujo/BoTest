@@ -1,17 +1,10 @@
-﻿using Contracts;
-using Contracts.Api;
+﻿using Contracts.Api;
 using Contracts.Requests;
 using Core.Managers;
-using Core.Services;
-using Core.Services.Session;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Backend.Controllers
@@ -60,7 +53,7 @@ namespace Backend.Controllers
         [HttpPost]
         [SwaggerOperation("SetActiveCompany")]
         [Route("ActiveCompany/")]
-        public async Task SetActiveCompany([FromBody] GetByIdRequest request)
+        public async Task SetActiveCompany([FromBody] IdRequest request)
         {
             await _userManager.SetActiveCompany(request.Token, request.Id);
         }

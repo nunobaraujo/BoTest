@@ -2,7 +2,7 @@
 
 namespace Contracts.Requests
 {
-    public class UpdateUserRequest:BearerTokenRequest
+    public class UserRequest:BearerTokenRequest
     {
         public User User { get; set; }
     }

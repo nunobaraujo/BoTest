@@ -16,6 +16,6 @@ namespace Contracts.Api
         Task<string> GetActiveCompany(BearerTokenRequest request);
 
         [Post("/api/session/ActiveCompany/")]
-        Task SetActiveCompany([Body]GetByIdRequest request);
+        Task SetActiveCompany([Body]IdRequest request);
     }
 }

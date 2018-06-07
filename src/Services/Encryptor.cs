@@ -1,11 +1,8 @@
 ﻿using Core.Encryption;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Core
+namespace Services
 {
-    public static class Common
+    public static class Encryptor
     {
         public static string SHA1Encrypt(string plainText, string encryptionKey, string salt, string IV)
         {

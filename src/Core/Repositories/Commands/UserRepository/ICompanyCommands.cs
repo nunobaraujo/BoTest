@@ -11,5 +11,7 @@ namespace Core.Repositories.Commands.UserRepository
         Task<string> Add(ICompany company);
         Task<string> Update(ICompany company);
         Task Delete(string companyId);
+
+        Task<IEnumerable<string>> UpdateBatch(IEnumerable<ICompany> companies);
     }
 }

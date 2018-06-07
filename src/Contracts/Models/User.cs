@@ -22,5 +22,6 @@ namespace Contracts.Models
         public string Email { get; set; }
         [JsonIgnore]
         public string Salt { get; set; }
+        public bool Encrypted { get; set; }
     }
 }

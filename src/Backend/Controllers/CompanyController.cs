@@ -2,6 +2,8 @@
 using Contracts.Api;
 using Contracts.Models;
 using Contracts.Requests;
+using Core.Extensions;
+using Core.Managers;
 using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +17,11 @@ namespace Backend.Controllers
     [Route("api/company")]
     public class CompanyController : Controller, ICompanyApi
     {
-        //private readonly IServerManagerService _serverManagerService;
+        private readonly IUserManager _userManager;
 
-        public CompanyController()
+        public CompanyController(IUserManager userManager)
         {
+            _userManager = userManager;
         }
         [HttpPost]
         public Task<string> Add([FromBody] CompanyRequest request)
@@ -26,14 +29,15 @@ namespace Backend.Controllers
             throw new NotImplementedException();
         }
         [HttpDelete]
-        public Task<string> Delete(GetByIdRequest request)
+        public Task<string> Delete(IdRequest request)
         {
             throw new NotImplementedException();
         }
         [HttpGet]
-        public Task<Company> Get(GetByIdRequest request)
+        public async Task<Company> Get(IdRequest request)
         {
-            throw new NotImplementedException();
+            var userRepository = await _userManager.GetUserRepository(request.Token);
+            return (await userRepository.Company.Get(request.Id))?.ToDto();
         }
         [HttpPut]
         public Task<string> Update([FromBody] CompanyRequest request)

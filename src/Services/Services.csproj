@@ -12,4 +12,15 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="lz4net" Version="1.0.15.93" />
+    <PackageReference Include="NBsoft.Logs.Sql" Version="1.0.0" />
+    <PackageReference Include="NBsoft.Sockets" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
 </Project>

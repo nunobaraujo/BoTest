@@ -11,7 +11,7 @@ namespace Contracts.Api
         /// Get company by Id
         /// </summary>
         [Get("/api/company/")]
-        Task<Company> Get(GetByIdRequest request);
+        Task<Company> Get(IdRequest request);
     
         /// <summary>
         /// Create new user
@@ -29,7 +29,7 @@ namespace Contracts.Api
         /// Delete user
         /// </summary>
         [Delete("/api/company/")]
-        Task<string> Delete([Body] GetByIdRequest request);
+        Task<string> Delete([Body] IdRequest request);
 
         /// <summary>
         /// Asing user to company

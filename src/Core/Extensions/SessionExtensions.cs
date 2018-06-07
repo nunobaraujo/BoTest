@@ -13,7 +13,8 @@ namespace Core.Extensions
                 Registered = src.Registered,
                 SessionToken = src.SessionToken,
                 UserId = src.UserId,
-                UserInfo = src.UserInfo
+                UserInfo = src.UserInfo,
+                ActiveCompany = src.ActiveCompany
             };
         }
     }

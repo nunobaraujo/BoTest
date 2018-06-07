@@ -19,5 +19,6 @@ namespace Contracts
         string Pin { get; }
         string Email { get; }
         string Salt { get; }
+        bool Encrypted { get; }
     }
 }

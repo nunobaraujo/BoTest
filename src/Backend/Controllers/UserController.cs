@@ -30,9 +30,10 @@ namespace Backend.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IUser), 200)]
-        public async Task<User> Get(GetByIdRequest request)
+        [ProducesResponseType(204)]
+        public async Task<IUser> Get(IdRequest request)
         {
-            return (await _userManager.GetUserById(request.Token, request.Id))
+            return (await _userManager.GetUserById(request.Token, request.Id))?
                 .ToDto();
         }
 
@@ -42,7 +43,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> Add([FromBody]CreateUserRequest request)
+        public async Task<IUser> Add([FromBody]CreateUserRequest request)
         {
             return await _userManager.CreateUser(request.UserName, request.UserPassword, request.Email);
         }
@@ -53,7 +54,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<string> Update([FromBody]UpdateUserRequest request)
+        public async Task<IUser> Update([FromBody]UserRequest request)
         {
             return await _userManager.UpdateUser(request.Token, request.User);
         }
@@ -64,7 +65,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task Delete(GetByIdRequest request)
+        public async Task Delete(IdRequest request)
         {
             await _userManager.DeleteUser(request.Token, request.Id);
         }
@@ -74,7 +75,7 @@ namespace Backend.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/ChangePassword/")]
+        [HttpPost("ChangePassword/")]
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             await _userManager.SetPassword(request.Token, request.NewPassword);
@@ -85,7 +86,7 @@ namespace Backend.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/GetCompanies/")]
+        [HttpPost("GetCompanies/")]
         public async Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request)
         {
             return await _userManager.GetCompanies(request.Token);

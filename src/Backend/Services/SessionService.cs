@@ -29,7 +29,7 @@ namespace Backend.Services
             _log = log;
         }
 
-        public async Task<string> CreateNewSession(string userId, string userInfo)
+        public async Task<string> CreateNewSession(string userId, string userInfo, string activeCompany)
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("Value cannot be empty", nameof(userId));
@@ -42,7 +42,8 @@ namespace Backend.Services
                     UserId = userId,
                     UserInfo = userInfo,
                     Registered = sessionStart,
-                    LastAction = sessionStart
+                    LastAction = sessionStart,
+                    ActiveCompany = activeCompany
                 };
                 newSession.SessionToken = GenerateToken(newSession);
                 
@@ -114,7 +115,7 @@ namespace Backend.Services
 
         private string GenerateToken(IUserSession newSession)
         {
-            string plain = $"{_settings.ApiKey};{newSession.UserId};{newSession.Registered.ToString("u")}";
+            string plain = $"{_settings.ApiKey};{newSession.UserId};{newSession.UserInfo};{newSession.Registered.ToString("u")}";
             return RijndaelSimple.Encrypt(plain, _settings.ApiKey, Salt, "SHA1", 1, IV, 128);
         }
         private async Task<IUserSession> ValidateToken(string sessionToken)
@@ -157,13 +158,13 @@ namespace Backend.Services
 
         }
 
-        public async Task UpdateSessionUserInfo(string sessionToken, string userInfo)
+        public async Task UpdateSessionUserInfo(string sessionToken, string activeCompany)
         {
             if (string.IsNullOrEmpty(sessionToken))
                 throw new ArgumentException("Value cannot be empty", nameof(sessionToken));
 
-            if (string.IsNullOrEmpty(userInfo))
-                throw new ArgumentException("Value cannot be empty", nameof(userInfo));
+            if (string.IsNullOrEmpty(activeCompany))
+                throw new ArgumentException("Value cannot be empty", nameof(activeCompany));
 
             var session = await ValidateToken(sessionToken);
             if (session == null)
@@ -171,7 +172,7 @@ namespace Backend.Services
 
             var editableSession = session.ToDto();
             editableSession.LastAction = DateTime.UtcNow;
-            editableSession.UserInfo= userInfo;
+            editableSession.ActiveCompany = activeCompany;
             await _sessionrepository.Session.Update(editableSession);
         }
     }

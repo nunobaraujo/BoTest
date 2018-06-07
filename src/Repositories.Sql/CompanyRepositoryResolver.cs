@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Core.Repositories;
+using NBsoft.Logs.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,15 @@ namespace Repositories.Sql
     {
         private readonly string _serverConnectionString;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _log;
 
         private List<ICompany> _companyList;
 
-        public CompanyRepositoryResolver(string serverConnectionString, IUserRepository userRepository)
+        public CompanyRepositoryResolver(string serverConnectionString, IUserRepository userRepository, ILogger log)
         {
             _serverConnectionString = serverConnectionString;
             _userRepository = userRepository;
+            _log = log;
         }
 
         public ICompanyRepository Resolve(string companyId)
@@ -36,7 +39,7 @@ namespace Repositories.Sql
             if (company == null)
                 return null;
 
-            return new CompanyRepository($"{_serverConnectionString};Database={company.Reference}");
+            return new CompanyRepository($"{_serverConnectionString};Database={company.Reference}", _log);
         }
 
         
