@@ -142,33 +142,21 @@ namespace Services.Comms.Sockets
 
             }
             else
-                retval.FormatedBody = null;
+                retval.SetInnerbody(new byte[0]);
 
             //Console.WriteLine("Receiving Body Size Compressed: [{0}] bytes ", Message.Body.Length);
 
             return retval;
         }
 
-        public static byte[] Encode(params dynamic[] parameters)
+        public static byte[] Encode<T>(T parameter)
         {
-            // Encode
-            //Console.WriteLine("{0} >> Serialize Start", DateTime.Now.ToString("HH:mm:ss.ff"));                
-            List<byte[]> BytePars = new List<byte[]>();
-            long bytecount = 0;
-            if (parameters == null || parameters.Length < 1)
-            {
-                //Console.WriteLine("Return byte[0]");
+            if (parameter == null)
                 return new byte[0];
-            }
 
-            foreach (var o in parameters)
-            {   
-                BytePars.Add(ModelSerializer.Serialize(o));
-                bytecount += BytePars[BytePars.Count - 1].Length;
-            }
-            return EncodeB(BytePars);
+            return Encode(new List<byte[]>() { ModelSerializer.Serialize<T>(parameter) });
         }
-        private static byte[] EncodeB(List<byte[]> parameters)
+        private static byte[] Encode(List<byte[]> parameters)
         {
             int l = 0;
             for (int i = 0; i < parameters.Count; i++)
@@ -212,22 +200,8 @@ namespace Services.Comms.Sockets
 
         }
 
-        internal static dynamic[] Decode(byte[] Msg)
-        {
-            if (Msg.Length < 4)
-                return new object[0];
-
-            List<byte[]> Parameters = DecodeB(Msg);
-
-            List<object> retval = new List<object>();
-            foreach (byte[] item in Parameters)
-            {
-                object obj1 = ModelSerializer.Deserialize<object>(item);
-                retval.Add(obj1);
-            }
-            return retval.ToArray();
-        }
-        private static List<byte[]> DecodeB(byte[] body)
+        
+        internal static List<byte[]> Decode(byte[] body)
         {
             //byte[] body = CommProtocol.Protocol.DecompressLZ4(bodyCompressed);
 
@@ -242,7 +216,6 @@ namespace Services.Comms.Sockets
 
                     try
                     {
-
                         pars.Add(bpar.ToArray());
                         //pars.Add(CommProtocol.Protocol.DecompressLZ4(bpar.ToArray()));
                     }
@@ -302,7 +275,13 @@ namespace Services.Comms.Sockets
 
         public static Message ValidateClient(Guid TerminalId)
         {
-            Message retval = new Message(ProtocolCommand.Validate, 0xFF, 0x07, CompressionType.Uncompressed, ClientSignature, TerminalId);
+            Message retval = new Message(ProtocolCommand.Validate, 0xFF, 0x07,
+                CompressionType.Uncompressed, 
+                new List<byte[]>
+                {
+                    ModelSerializer.Serialize(ClientSignature),
+                    ModelSerializer.Serialize(TerminalId)
+                });
             return retval;
         }
 
