@@ -161,7 +161,7 @@ namespace Services.Comms.Sockets
                 return new byte[0];
             }
 
-            foreach (var o in parameters)
+            foreach (object o in parameters)
             {   
                 BytePars.Add(ModelSerializer.Serialize(o));
                 bytecount += BytePars[BytePars.Count - 1].Length;

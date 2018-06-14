@@ -22,7 +22,7 @@ namespace SocketConnection.Tests
             var token = await cli.SessionApi.LogIn(new LogInRequest { UserName = "sa", UserPassword = "#Na123" });
             Console.WriteLine(token);
             await RunSessionTests(cli, token);
-
+            await RunUserTests(cli, token);
 
             await cli.SessionApi.LogOut(new BearerTokenRequest { Token = token });
         }
