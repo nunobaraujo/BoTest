@@ -18,7 +18,8 @@ namespace SocketClient.Api
 
         public Task<string> GetActiveCompany(BearerTokenRequest request)
         {
-            throw new NotImplementedException();
+            var result = _client.SendCustomMessage(Services.Comms.Sockets.SubCommand.SessionActiveCompanyGet, 0x00, request);
+            return Task.FromResult((string)result.FormatedBody[0]);
         }
 
         public Task<string> LogIn(LogInRequest request)
@@ -30,12 +31,14 @@ namespace SocketClient.Api
 
         public Task LogOut(BearerTokenRequest request)
         {
-            throw new NotImplementedException();
+            var result = _client.SendCustomMessage(Services.Comms.Sockets.SubCommand.SessionLogOut, 0x00, request);
+            return Task.FromResult((string)result.FormatedBody[0]);
         }
 
         public Task SetActiveCompany(IdRequest request)
         {
-            throw new NotImplementedException();
+            var result = _client.SendCustomMessage(Services.Comms.Sockets.SubCommand.SessionActiveCompanySet, 0x00, request);
+            return Task.FromResult(0);
         }
     }
 }
