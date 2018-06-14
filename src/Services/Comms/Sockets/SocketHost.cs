@@ -105,7 +105,7 @@ namespace Services.Comms.Sockets
             catch (Exception ex01)
             {
                 isComplete = false;                
-                e.Connection.Send(Protocol.EncodeMessageBytes(new Message(ProtocolCommand.NACK, CompressionType.Uncompressed)));
+                e.Connection.Send(new Message(ProtocolCommand.NACK, CompressionType.Uncompressed));
 
                 clientConnection.IncomingMessage.Clear();
                 await _logger?.WriteErrorAsync(nameof(SocketHost), nameof(ProcessReceivedData), e.Connection.RemoteEndPoint.ToString(), ex01);
@@ -130,7 +130,7 @@ namespace Services.Comms.Sockets
         private async Task ProcessIncomingMessage(ClientConnection connection, byte[] message)
         {
             Message received;
-            try { received = Protocol.DecodeMessageBytes(message); }
+            try { received = Message .Deserialize(message); }
             catch (Exception ex01)
             {
                 connection.SendNack();
@@ -211,24 +211,18 @@ namespace Services.Comms.Sockets
                     if (connection.IsValid)
                     {   
                         try
-                        {
-                            var result = new Message
-                            {
-                                Command = ProtocolCommand.ACK,
-                                SubCommand = 0x00
-                            };
+                        {  
                             SubCommand command = (SubCommand)received.SubCommand;
                             switch (command)
                             {
                                 case SubCommand.Unknown:
-                                    result.Command = ProtocolCommand.NACK;
+                                    connection.SendNack();                                    
                                     break;
                                 default:
-                                    //result.SetInnerbody(await ProcessCommand(connection, (SubCommand)received.SubCommand, received.Reserved, received.InnerBody));
-                                    result.SetInnerbody(await ProcessCommand(connection, received));
+                                    var response = await ProcessCommand(connection, received);
+                                    connection.Send(response);
                                     break;
                             }
-                            connection.Send(result);
                         }
                         catch (Exception ex)
                         {
@@ -249,44 +243,54 @@ namespace Services.Comms.Sockets
             }
 
         }
-        private async Task<byte[]> ProcessCommand(ClientConnection connection, Message msg)
-        {   
+        private async Task<Message> ProcessCommand(ClientConnection connection, Message msg)
+        {
+            var response = new Message()
+            {
+                Command = ProtocolCommand.ACK,
+                SubCommand = 0x00
+            };
+
             switch ((SubCommand)msg.SubCommand)
             {
                 #region SessionApi
                 case SubCommand.SessionLogIn:
-                    return Protocol.Encode(await Session(connection).LogIn(msg.GetParameter<LogInRequest>()));
+                    response.AddParameter(await Session(connection).LogIn(msg.GetParameter<LogInRequest>()));
+                    break;
                 case SubCommand.SessionLogOut:
                     await Session(connection).LogOut(msg.GetParameter<BearerTokenRequest>());
-                    return new byte[0];
+                    break;
                 case SubCommand.SessionActiveCompanyGet:
-                    return Protocol.Encode(await Session(connection).GetActiveCompany(msg.GetParameter<BearerTokenRequest>()));
+                    response.AddParameter(await Session(connection).GetActiveCompany(msg.GetParameter<BearerTokenRequest>()));
+                    break;
                 case SubCommand.SessionActiveCompanySet:
                     await Session(connection).SetActiveCompany(msg.GetParameter<IdRequest>());
-                    return new byte[0];
+                    break;
                 #endregion
 
                 #region UserApi
                 case SubCommand.UserAdd:
-                    return Protocol.Encode(await User(connection).Add(msg.GetParameter<CreateUserRequest>()));
+                    response.AddParameter(await User(connection).Add(msg.GetParameter<CreateUserRequest>()));
+                    break;
                 case SubCommand.UserChangePassword:
                     await User(connection).ChangePassword(msg.GetParameter<ChangePasswordRequest>());
-                    return new byte[0];
+                    break;
                 case SubCommand.UserDelete:
                     await User(connection).Delete(msg.GetParameter<IdRequest>());
-                    return new byte[0];
+                    break;
                 case SubCommand.UserGet:
-                    return Protocol.Encode(await User(connection).Get(msg.GetParameter<IdRequest>()));
+                    response.AddParameter(await User(connection).Get(msg.GetParameter<IdRequest>()));
+                    break;
                 case SubCommand.UserGetCompanies:
-                    return Protocol.Encode(await User(connection).GetCompanies(msg.GetParameter<BearerTokenRequest>()));
+                    response.AddParameter(await User(connection).GetCompanies(msg.GetParameter<BearerTokenRequest>()));
+                    break;
                 case SubCommand.UserUpdate:
-                    return Protocol.Encode(await User(connection).Update(msg.GetParameter<UserRequest>()));
+                    response.AddParameter(await User(connection).Update(msg.GetParameter<UserRequest>()));
+                    break;
 
                 #endregion
-
-                default:
-                    return new byte[0];
             }
+            return response;
         }
         
         private void SendError(ClientConnection clientConnection, Exception ex)

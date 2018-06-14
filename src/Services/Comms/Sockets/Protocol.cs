@@ -48,7 +48,7 @@ namespace Services.Comms.Sockets
 
         #region Encoding
 
-        public static byte[] EncodeMessageBytes(Message Message)
+        internal static byte[] EncodeMessageBytes(Message Message)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace Services.Comms.Sockets
                 return new byte[0];
             }
         }
-        public static Message DecodeMessageBytes(byte[] ReceivedBytes)
+        internal static Message DecodeMessageBytes(byte[] ReceivedBytes)
         {
             Message retval = new Message();
 
@@ -149,14 +149,7 @@ namespace Services.Comms.Sockets
             return retval;
         }
 
-        internal static byte[] Encode<T>(T parameter)
-        {
-            if (parameter == null)
-                return new byte[0];
-
-            return Encode(new List<byte[]>() { ModelSerializer.Serialize<T>(parameter) });
-        }
-        internal static byte[] Encode(List<byte[]> parameters)
+        internal static byte[] EncodeBody(List<byte[]> parameters)
         {
             int l = 0;
             for (int i = 0; i < parameters.Count; i++)
@@ -198,10 +191,8 @@ namespace Services.Comms.Sockets
                 bodyBuff = null;
             }
 
-        }
-
-        
-        internal static List<byte[]> Decode(byte[] body)
+        }        
+        internal static List<byte[]> DecodeBody(byte[] body)
         {
             if (body == null || body.Length < 1)
                 return new List<byte[]>();

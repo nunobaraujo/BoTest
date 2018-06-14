@@ -12,7 +12,7 @@ namespace SocketClient
     public class Client : NBsoft.Sockets.SocketClient, IRestClient
     {
         const int Timeout = 30 * 1000;
-                
+
         private readonly Guid _socketId;
         private readonly List<byte> _completeMessage;
 
@@ -70,33 +70,22 @@ namespace SocketClient
         }
 
         private bool Validate()
-        {
-            Message outgoing = Protocol.ValidateClient(_socketId);
-            Message Response = SendMessageToServer(Protocol.EncodeMessageBytes(outgoing));
-            if (Response.Command == ProtocolCommand.ACK)
+        {   
+            var message = SendBytes(Message.Serialize(Protocol.ValidateClient(_socketId)));
+            if (message.Command == ProtocolCommand.ACK)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         private void SendAck()
-        {
-            Message NACKmsg = new Message(ProtocolCommand.ACK, CompressionType.Uncompressed);
-            Send(Protocol.EncodeMessageBytes(NACKmsg));
+        {   
+            this.SendMessage(new Message(ProtocolCommand.ACK, CompressionType.Uncompressed));
         }
         private void SendNack()
         {
-            Message NACKmsg = new Message(ProtocolCommand.NACK, CompressionType.Uncompressed);
-            Send(Protocol.EncodeMessageBytes(NACKmsg));
-        }
-
-        public Message SendCustomMessage<T>(SubCommand subCommand, byte CommandOptions, T parameter)
-        {
-            Message outgoing = new Message(ProtocolCommand.Custom, (byte)subCommand, CommandOptions, CompressionType.Uncompressed);
-            outgoing.AddParameter(parameter);
-            return SendMessageToServer(Protocol.EncodeMessageBytes(outgoing));
-        }       
-        private Message SendMessageToServer(byte[] msg)
+            this.SendMessage(new Message(ProtocolCommand.NACK, CompressionType.Uncompressed));
+        }        
+        private Message SendBytes(byte[] msg)
         {
             _answerReceived = false;
             Send(msg);
@@ -111,6 +100,17 @@ namespace SocketClient
             }
             _answerReceived = false;
             return _lastAnswer;
+        }
+
+        public Message SendCustomMessage<T>(SubCommand subCommand, T parameter)
+        {
+            return SendCustomMessage(subCommand, 0x00, parameter);
+        }
+        public Message SendCustomMessage<T>(SubCommand subCommand, byte CommandOptions, T parameter)
+        {
+            var message = new Message(ProtocolCommand.Custom, (byte)subCommand, CommandOptions, CompressionType.Uncompressed);
+            message.AddParameter(parameter);
+            return SendBytes(Message.Serialize(message));
         }
 
         #region Event Handlers
@@ -132,9 +132,7 @@ namespace SocketClient
             if (IsComplete)
             {
                 _completeMessage.Clear();
-                //Console.WriteLine("Client: Received Message Size [{0}] bytes", tmp.Length);
-                Message received = Protocol.DecodeMessageBytes(tmp);
-
+                Message received = Message.Deserialize(tmp);
 
                 switch (received.Command)
                 {
@@ -174,5 +172,13 @@ namespace SocketClient
             base.OnFileReceived(e);
         }
         #endregion
+    }
+    internal static class ClientExtensions
+    {
+        internal static void SendMessage(this NBsoft.Sockets.SocketClient cli, Message msg)
+        {
+            cli.Send(Message.Serialize(msg));
+        }
+        
     }
 }

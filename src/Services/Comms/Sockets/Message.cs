@@ -63,6 +63,13 @@ namespace Services.Comms.Sockets
         public byte[] InnerBody { get { return body; } }
 
         //public object[] FormatedBody { get { return GetBody(body); ; } set { body = SetBody(value); } }
+                
+        /// <summary>
+        /// Compression mode
+        /// </summary>        
+        public CompressionType Compression { get { return compression; } set { compression = value; } }
+
+        #endregion
 
         public T GetParameter<T>()
         {
@@ -70,14 +77,14 @@ namespace Services.Comms.Sockets
         }
         public T GetParameter<T>(int paramIndex)
         {
-            var paramList = Protocol.Decode(body);
+            var paramList = Protocol.DecodeBody(body);
             return ModelSerializer.Deserialize<T>(paramList[paramIndex]);
         }
         public void AddParameter<T>(T parameter)
         {
-            var paramList = Protocol.Decode(body);
+            var paramList = Protocol.DecodeBody(body);
             paramList.Add(ModelSerializer.Serialize(parameter));
-            body = Protocol.Encode(paramList);
+            body = Protocol.EncodeBody(paramList);
         }
 
         internal void SetInnerbody(byte[] innerBody)
@@ -85,12 +92,14 @@ namespace Services.Comms.Sockets
             body = innerBody;
         }
 
-        /// <summary>
-        /// Compression mode
-        /// </summary>        
-        public CompressionType Compression { get { return compression; } set { compression = value; } }
-
-        #endregion
-        
+        public static Message Deserialize(byte[] message)
+        {
+            return Protocol.DecodeMessageBytes(message);
+        }
+        public static byte[] Serialize(Message message)
+        {
+            return Protocol.EncodeMessageBytes(message);
+        }
     }
+    
 }
