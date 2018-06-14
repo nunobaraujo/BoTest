@@ -149,14 +149,14 @@ namespace Services.Comms.Sockets
             return retval;
         }
 
-        public static byte[] Encode<T>(T parameter)
+        internal static byte[] Encode<T>(T parameter)
         {
             if (parameter == null)
                 return new byte[0];
 
             return Encode(new List<byte[]>() { ModelSerializer.Serialize<T>(parameter) });
         }
-        private static byte[] Encode(List<byte[]> parameters)
+        internal static byte[] Encode(List<byte[]> parameters)
         {
             int l = 0;
             for (int i = 0; i < parameters.Count; i++)
@@ -203,7 +203,8 @@ namespace Services.Comms.Sockets
         
         internal static List<byte[]> Decode(byte[] body)
         {
-            //byte[] body = CommProtocol.Protocol.DecompressLZ4(bodyCompressed);
+            if (body == null || body.Length < 1)
+                return new List<byte[]>();
 
             List<byte[]> pars = new List<byte[]>();
             List<byte> bpar = new List<byte>();
@@ -275,14 +276,10 @@ namespace Services.Comms.Sockets
 
         public static Message ValidateClient(Guid TerminalId)
         {
-            Message retval = new Message(ProtocolCommand.Validate, 0xFF, 0x07,
-                CompressionType.Uncompressed, 
-                new List<byte[]>
-                {
-                    ModelSerializer.Serialize(ClientSignature),
-                    ModelSerializer.Serialize(TerminalId)
-                });
-            return retval;
+            Message msg = new Message(ProtocolCommand.Validate, 0xFF, 0x07, CompressionType.Uncompressed);
+            msg.AddParameter(ClientSignature);
+            msg.AddParameter(TerminalId);
+            return msg;
         }
 
         private static byte[] CompressLZ4(byte[] UncompressedData)

@@ -28,39 +28,22 @@ namespace Services.Comms.Sockets
         }
 
         public Message(ProtocolCommand Command, CompressionType Compression)
-            : this(Command, 0x00, 0x00, Compression, null)
+            : this(Command, 0x00, 0x00, Compression)
         {
         }
-        public Message(ProtocolCommand Command, byte SubCommand, byte Reserved, CompressionType Compression, List<byte[]> Body)
+        public Message(ProtocolCommand Command, byte SubCommand, byte Reserved, CompressionType Compression)
             : this()
         {
             this.Command = Command;
             subCommand = SubCommand;
-            body = SetBody(Body);
             compression = Compression;
             reserved = Reserved;
         }
 
 
         #endregion
-
-        public void SetInnerbody(byte[] innerBody)
-        {
-            body = innerBody;
-        }
-        private byte[] SetBody(List<byte[]> body)
-        {
-            if (body == null || body.Count < 1)
-                return new byte[0];
-            else
-                return Protocol.Encode(body);
-        }
-        private List<byte[]> GetBody(byte[] body)
-        {
-            if (body == null || body.Length < 1)
-                return new List<byte[]>();
-            return Protocol.Decode(body); ;
-        }
+               
+       
         #region Properties
         /// <summary>
         /// Message Command
@@ -87,7 +70,19 @@ namespace Services.Comms.Sockets
         }
         public T GetParameter<T>(int paramIndex)
         {
-            return ModelSerializer.Deserialize<T>(GetBody(body)[paramIndex]);
+            var paramList = Protocol.Decode(body);
+            return ModelSerializer.Deserialize<T>(paramList[paramIndex]);
+        }
+        public void AddParameter<T>(T parameter)
+        {
+            var paramList = Protocol.Decode(body);
+            paramList.Add(ModelSerializer.Serialize(parameter));
+            body = Protocol.Encode(paramList);
+        }
+
+        internal void SetInnerbody(byte[] innerBody)
+        {
+            body = innerBody;
         }
 
         /// <summary>

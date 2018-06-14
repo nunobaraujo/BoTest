@@ -91,16 +91,9 @@ namespace SocketClient
         }
 
         public Message SendCustomMessage<T>(SubCommand subCommand, byte CommandOptions, T parameter)
-        {            
-            Message outgoing = new Message(
-                ProtocolCommand.Custom, 
-                (byte)subCommand, 
-                CommandOptions, 
-                CompressionType.Uncompressed, 
-                new List<byte[]>()
-                {
-                    Protocol.Encode(parameter)
-                });
+        {
+            Message outgoing = new Message(ProtocolCommand.Custom, (byte)subCommand, CommandOptions, CompressionType.Uncompressed);
+            outgoing.AddParameter(parameter);
             return SendMessageToServer(Protocol.EncodeMessageBytes(outgoing));
         }       
         private Message SendMessageToServer(byte[] msg)
