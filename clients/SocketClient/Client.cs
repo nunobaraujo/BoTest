@@ -90,11 +90,19 @@ namespace SocketClient
             Send(Protocol.EncodeMessageBytes(NACKmsg));
         }
 
-        public Message SendCustomMessage(SubCommand subCommand, byte CommandOptions, params object[] pars)
-        {
-            Message outgoing = new Message(ProtocolCommand.Custom, (byte)subCommand, CommandOptions, CompressionType.Uncompressed, pars);
+        public Message SendCustomMessage<T>(SubCommand subCommand, byte CommandOptions, T parameter)
+        {            
+            Message outgoing = new Message(
+                ProtocolCommand.Custom, 
+                (byte)subCommand, 
+                CommandOptions, 
+                CompressionType.Uncompressed, 
+                new List<byte[]>()
+                {
+                    Protocol.Encode(parameter)
+                });
             return SendMessageToServer(Protocol.EncodeMessageBytes(outgoing));
-        }
+        }       
         private Message SendMessageToServer(byte[] msg)
         {
             _answerReceived = false;
@@ -149,11 +157,11 @@ namespace SocketClient
                         // Servidor enviou uma mensagem desconhecida, ignorar.
                         break;
                     case ProtocolCommand.ClientConnected:
-                        string cclient = received.FormatedBody[0].ToString();
+                        string cclient = received.GetParameter<string>();
                         //OnClientConnected(new HostEventArgs(cclient));
                         break;
                     case ProtocolCommand.ClientDisconnected:
-                        string dclient = received.FormatedBody[0].ToString();
+                        string dclient = received.GetParameter<string>();
                         //OnClientDisconnected(new HostEventArgs(dclient));
                         break;
                     case ProtocolCommand.Custom:

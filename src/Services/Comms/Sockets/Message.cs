@@ -31,7 +31,7 @@ namespace Services.Comms.Sockets
             : this(Command, 0x00, 0x00, Compression, null)
         {
         }
-        public Message(ProtocolCommand Command, byte SubCommand, byte Reserved, CompressionType Compression, params object[] Body)
+        public Message(ProtocolCommand Command, byte SubCommand, byte Reserved, CompressionType Compression, List<byte[]> Body)
             : this()
         {
             this.Command = Command;
@@ -48,19 +48,18 @@ namespace Services.Comms.Sockets
         {
             body = innerBody;
         }
-        private byte[] SetBody(object[] body)
+        private byte[] SetBody(List<byte[]> body)
         {
-            if (body == null || body.Length < 1)
+            if (body == null || body.Count < 1)
                 return new byte[0];
             else
                 return Protocol.Encode(body);
         }
-        private object[] GetBody(byte[] body)
+        private List<byte[]> GetBody(byte[] body)
         {
             if (body == null || body.Length < 1)
-                return new object[] { null };
-            object[] retval = Protocol.Decode(body);
-            return retval;
+                return new List<byte[]>();
+            return Protocol.Decode(body); ;
         }
         #region Properties
         /// <summary>
@@ -80,7 +79,16 @@ namespace Services.Comms.Sockets
         /// </summary>
         public byte[] InnerBody { get { return body; } }
 
-        public object[] FormatedBody { get { return GetBody(body); ; } set { body = SetBody(value); } }
+        //public object[] FormatedBody { get { return GetBody(body); ; } set { body = SetBody(value); } }
+
+        public T GetParameter<T>()
+        {
+            return GetParameter<T>(0);
+        }
+        public T GetParameter<T>(int paramIndex)
+        {
+            return ModelSerializer.Deserialize<T>(GetBody(body)[paramIndex]);
+        }
 
         /// <summary>
         /// Compression mode

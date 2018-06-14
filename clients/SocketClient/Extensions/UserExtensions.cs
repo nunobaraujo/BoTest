@@ -10,7 +10,7 @@ namespace SocketClient.Extensions
         public static Task<IUser> UserAdd(this Client cli, CreateUserRequest request)
         {
             var result = cli.SendCustomMessage(Services.Comms.Sockets.SubCommand.UserAdd, 0x00, request);
-            return Task.FromResult(ValidateResponce<IUser>(result.FormatedBody[0]));
+            return Task.FromResult(result.GetParameter<IUser>());
         }
         public static Task UserChangePassword(this Client cli, ChangePasswordRequest request)
         {
@@ -27,27 +27,20 @@ namespace SocketClient.Extensions
         public static Task<IUser> UserGet(this Client cli, IdRequest request)
         {
             var result = cli.SendCustomMessage(Services.Comms.Sockets.SubCommand.UserGet, 0x00, request);
-            return Task.FromResult((IUser)result.FormatedBody[0]);
+            return Task.FromResult(result.GetParameter<IUser>());
         }
 
         public static Task<List<ICompanyUser>> UserGetCompanies(this Client cli, BearerTokenRequest request)
         {
             var result = cli.SendCustomMessage(Services.Comms.Sockets.SubCommand.UserGetCompanies, 0x00, request);
-            return Task.FromResult((List<ICompanyUser>)result.FormatedBody[0]);
+            return Task.FromResult(result.GetParameter<List<ICompanyUser>>());
         }
 
         public static Task<IUser> UserUpdate(this Client cli, UserRequest request)
         {
             var result = cli.SendCustomMessage(Services.Comms.Sockets.SubCommand.UserUpdate, 0x00, request);
-            return Task.FromResult((IUser)result.FormatedBody[0]);
+            return Task.FromResult(result.GetParameter<IUser>());
         }
 
-        private static T ValidateResponce<T>(object parameter)
-        {
-            if (parameter is T)
-                return (T)parameter;
-            else
-                throw new System.Exception(parameter.ToString());
-        }
     }
 }
