@@ -149,7 +149,7 @@ namespace Services.Comms.Sockets
             return retval;
         }
 
-        public static byte[] Encode(params object[] parameters)
+        public static byte[] Encode(params dynamic[] parameters)
         {
             // Encode
             //Console.WriteLine("{0} >> Serialize Start", DateTime.Now.ToString("HH:mm:ss.ff"));                
@@ -161,8 +161,8 @@ namespace Services.Comms.Sockets
                 return new byte[0];
             }
 
-            foreach (object o in parameters)
-            {
+            foreach (var o in parameters)
+            {   
                 BytePars.Add(ModelSerializer.Serialize(o));
                 bytecount += BytePars[BytePars.Count - 1].Length;
             }
@@ -212,7 +212,7 @@ namespace Services.Comms.Sockets
 
         }
 
-        internal static object[] Decode(byte[] Msg)
+        internal static dynamic[] Decode(byte[] Msg)
         {
             if (Msg.Length < 4)
                 return new object[0];
