@@ -104,18 +104,26 @@ namespace Services.Comms.Sockets
             }
             catch (Exception ex01)
             {
-                isComplete = false;
-                Message nack = new Message(ProtocolCommand.NACK, global::Services.Comms.Sockets.CompressionType.Uncompressed);
-                e.Connection.Send(Protocol.EncodeMessageBytes(nack));
+                isComplete = false;                
+                e.Connection.Send(Protocol.EncodeMessageBytes(new Message(ProtocolCommand.NACK, CompressionType.Uncompressed)));
 
                 clientConnection.IncomingMessage.Clear();
                 await _logger?.WriteErrorAsync(nameof(SocketHost), nameof(ProcessReceivedData), e.Connection.RemoteEndPoint.ToString(), ex01);
             }
 
-            if (isComplete && clientConnection != null)
+            try
             {
-                clientConnection.IncomingMessage.Clear();
-                await ProcessIncomingMessage(clientConnection, tempData);
+                if (isComplete && clientConnection != null)
+                {
+                    clientConnection.IncomingMessage.Clear();
+                    await ProcessIncomingMessage(clientConnection, tempData);
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = new Message(ProtocolCommand.ACK, CompressionType.Uncompressed);
+                msg.SetInnerbody(Protocol.Encode($"ERR:{ex.Message}|STACK:{ex.StackTrace}"));
+                clientConnection.Send(msg); 
             }
 
         }
@@ -151,7 +159,7 @@ namespace Services.Comms.Sockets
                     {
                         object[] pars = received.FormatedBody;
                         long sig = (long)pars[0];
-                        Guid tid = (Guid)pars[1];
+                        Guid tid = Guid.Parse((string)pars[1]);
                         if (sig != Protocol.ClientSignature)
                             isvalid = false;
 
