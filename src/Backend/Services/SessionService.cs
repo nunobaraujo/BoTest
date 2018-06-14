@@ -48,7 +48,7 @@ namespace Backend.Services
                 newSession.SessionToken = GenerateToken(newSession);
                 
                 await _sessionrepository.Session.New(newSession);
-                await _log.WriteInfoAsync(nameof(SessionService), nameof(CreateNewSession), newSession.ToJson(), "New session created");
+                await _log.WriteInfoAsync(nameof(SessionService), nameof(CreateNewSession), newSession.ToJson(), "New session created.");
                 return newSession.SessionToken;
             }
             catch (Exception ex)
@@ -74,6 +74,7 @@ namespace Backend.Services
                 if (session != null)
                 {
                     await _sessionrepository.Session.Remove(sessionToken);
+                    await _log.WriteInfoAsync(nameof(SessionService), nameof(KillSession), session.SessionToken, "Session Terminated.");
                 }
             }
             catch (Exception ex)

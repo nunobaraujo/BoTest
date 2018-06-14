@@ -31,7 +31,8 @@ namespace SocketClient
             _port = port;
             _log = log;
 
-            SessionApi = new Session(this);
+            SessionApi = new SessionApi(this);
+            UserApi = new UserApi(this);
         }
 
         public ISessionApi SessionApi { get; }
