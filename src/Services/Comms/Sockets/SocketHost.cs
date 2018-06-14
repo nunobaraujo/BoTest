@@ -193,11 +193,8 @@ namespace Services.Comms.Sockets
                     #region ClientList
                     if (connection.IsValid)
                     {
-                        Message reval = new Message();
-                        reval.Command = ProtocolCommand.ACK;
-                        reval.SubCommand = 0x00;
-                        Array a = _connectedClients.ToArray();
-                        reval.SetInnerbody(Protocol.Encode(a));
+                        Message reval = new Message(ProtocolCommand.ACK, CompressionType.Uncompressed);
+                        reval.AddParameter(_connectedClients.ToArray());
                         connection.Send(reval);
                     }
                     else
@@ -282,7 +279,6 @@ namespace Services.Comms.Sockets
                     return Protocol.Encode(await User(connection).Get(msg.GetParameter<IdRequest>()));
                 case SubCommand.UserGetCompanies:
                     return Protocol.Encode(await User(connection).GetCompanies(msg.GetParameter<BearerTokenRequest>()));
-
                 case SubCommand.UserUpdate:
                     return Protocol.Encode(await User(connection).Update(msg.GetParameter<UserRequest>()));
 
@@ -296,7 +292,7 @@ namespace Services.Comms.Sockets
         private void SendError(ClientConnection clientConnection, Exception ex)
         {
             var msg = new Message(ProtocolCommand.ACK, CompressionType.Uncompressed);
-            msg.SetInnerbody(Protocol.Encode(new List<byte[]>() { ModelSerializer.Serialize($"ERR:{ex.Message}|STACK:{ex.StackTrace}") }));
+            msg.AddParameter($"ERR:{ex.Message}|STACK:{ex.StackTrace}");
             clientConnection.Send(msg);
         }
 
