@@ -44,11 +44,7 @@ namespace Services.Comms.Sockets
         internal const byte NP = 0x0C;
         #endregion
 
-        #region Vars        
-        private static BinaryFormatter bFormatter = new BinaryFormatter();
-
-
-        #endregion
+        
 
         #region Encoding
 
@@ -167,7 +163,7 @@ namespace Services.Comms.Sockets
 
             foreach (object o in parameters)
             {
-                BytePars.Add(SerializeObject(o));
+                BytePars.Add(ModelSerializer.Serialize(o));
                 bytecount += BytePars[BytePars.Count - 1].Length;
             }
             return EncodeB(BytePars);
@@ -226,7 +222,7 @@ namespace Services.Comms.Sockets
             List<object> retval = new List<object>();
             foreach (byte[] item in Parameters)
             {
-                object obj1 = DeserializeObject(item);
+                object obj1 = ModelSerializer.Deserialize<object>(item);
                 retval.Add(obj1);
             }
             return retval.ToArray();
@@ -267,36 +263,7 @@ namespace Services.Comms.Sockets
 
         #region Serialization
 
-        private static byte[] SerializeObject(object Object)
-        {
-            if (Object == null)
-                return new byte[0];
-
-            byte[] data;
-            using (Stream stream = new MemoryStream())
-            {
-                bFormatter.Serialize(stream, Object);
-                stream.Position = 0;
-                using (var br = new BinaryReader(stream))
-                {
-                    data = br.ReadBytes((int)stream.Length);
-                }
-                stream.Close();
-            }
-            return data;
-        }
-        private static object DeserializeObject(byte[] ObjectBytes)
-        {
-            if (ObjectBytes == null || ObjectBytes.Length == 0)
-                return null;
-            object retval;
-            using (Stream stream = new MemoryStream(ObjectBytes))
-            {
-                retval = bFormatter.Deserialize(stream);
-                stream.Close();
-            }
-            return retval;
-        }
+       
         #endregion
 
         public static bool IsMessageComplete(byte[] ReceivedBytes)
