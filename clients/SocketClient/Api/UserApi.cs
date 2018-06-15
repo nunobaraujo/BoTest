@@ -1,6 +1,8 @@
 ﻿using Contracts;
 using Contracts.Api;
+using Contracts.Models;
 using Contracts.Requests;
+using Core.Extensions;
 using SocketClient.Extensions;
 using System;
 using System.Collections.Generic;
@@ -18,10 +20,10 @@ namespace SocketClient.Api
             _client = client;
         }
 
-        public Task<IUser> Add(CreateUserRequest request)
+        public async Task<User> Add(CreateUserRequest request)
         {
             _client.Connect();
-            return _client.UserAdd(request);
+            return (await _client.UserAdd(request)).ToDto();
         }
 
         public Task ChangePassword(ChangePasswordRequest request)
@@ -36,10 +38,10 @@ namespace SocketClient.Api
             return _client.UserDelete(request);
         }
 
-        public Task<IUser> Get(IdRequest request)
+        public async Task<User> Get(IdRequest request)
         {
             _client.Connect();
-            return _client.UserGet(request);
+            return (await _client.UserGet(request)).ToDto();
         }
 
         public Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request)
@@ -48,10 +50,10 @@ namespace SocketClient.Api
             return _client.UserGetCompanies(request);
         }
 
-        public Task<IUser> Update(UserRequest request)
+        public async Task<User> Update(UserRequest request)
         {
             _client.Connect();
-            return _client.UserUpdate(request);
+            return (await _client.UserUpdate(request)).ToDto();
         }
     }
 }
