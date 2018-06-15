@@ -56,16 +56,7 @@ namespace Backend.Controllers
                     .ToDto();
             return null;
         }
-        [HttpGet, Route("")]
-        public async Task<List<Job>> List(BearerTokenRequest request)
-        {
-            var repo = await _userManager.ResolveRepository(request.Token);
-            if (repo != null)
-                return (await repo.Job.List())
-                    .Select(x => x.ToDto())
-                    .ToList();
-            return null;
-        }
+       
 
         [HttpPut, Route("{jobId}")]
         public async Task<string> Update(string jobId, [FromBody]JobRequest request)

@@ -6,6 +6,7 @@ using Core.Extensions;
 using SocketClient.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,10 +45,12 @@ namespace SocketClient.Api
             return (await _client.UserGet(request)).ToDto();
         }
 
-        public Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request)
+        public async Task<List<CompanyUser>> GetCompanies(BearerTokenRequest request)
         {
             _client.Connect();
-            return _client.UserGetCompanies(request);
+            return (await _client.UserGetCompanies(request))
+                .Select(x => x.ToDto())
+                .ToList();
         }
 
         public async Task<User> Update(UserRequest request)

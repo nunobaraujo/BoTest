@@ -10,23 +10,19 @@ namespace Contracts.Api
 {
     public interface IJobApi
     {
-        /// <summary>
-        /// Get job list
-        /// </summary>
-        [Get("/api/job/")]
-        Task<List<Job>> List(BearerTokenRequest request);
-
-        /// <summary>
-        /// Get job by id
-        /// </summary>
-        [Get("/api/job/{jobId}")]
-        Task<Job> Get(string jobId, BearerTokenRequest request);
+        
         /// <summary>
         /// Create new job
         /// </summary>
         [Post("/api/job/")]
         Task<string> Add([Body]JobRequest request);
 
+        /// <summary>
+        /// Get job by id
+        /// </summary>
+        [Get("/api/job/{jobId}")]
+        Task<Job> Get(string jobId, BearerTokenRequest request);
+        
         /// <summary>
         /// Update job
         /// </summary>

@@ -24,7 +24,11 @@ namespace Repositories.Common
 
         public IJobCommands CreateJobCommands()
         {
-            return new JobCommands(_createdDbConnection, _getLastCreatedId, _getEncryptionKey, _log);
+            return new JobCommands(_createdDbConnection,  _log);
+        }
+        public ICompanyOptionsCommands CreateCompanyOptionsCommands()
+        {
+            return new CompanyOptionsCommands(_createdDbConnection, _log);
         }
     }
 }

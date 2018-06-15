@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MessagePack;
 
 namespace Contracts.Models
 {
+    [MessagePackObject(keyAsPropertyName: true)]
     public class UserSettings : IUserSettings
     {
         public string UserName { get; set; }

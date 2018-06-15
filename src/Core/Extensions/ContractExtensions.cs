@@ -82,5 +82,17 @@ namespace Core.Extensions
                 UserId = src.UserId
             };
         }
+
+        public static CompanyUser ToDto(this ICompanyUser src)
+        {
+            return new CompanyUser
+            {
+                CompanyId = src.CompanyId,
+                Id = src.Id,
+                IsDefault = src.IsDefault,
+                PermissionLevel = src.PermissionLevel,
+                UserName = src.UserName
+            };
+        }
     }
 }

@@ -42,6 +42,6 @@ namespace Contracts.Api
         /// Get companies this user has access to
         /// </summary>
         [Post("/api/user/GetCompanies/")]
-        Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request);
+        Task<List<CompanyUser>> GetCompanies(BearerTokenRequest request);
     }
 }

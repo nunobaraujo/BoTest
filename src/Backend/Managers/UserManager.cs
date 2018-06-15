@@ -4,6 +4,7 @@ using Core.Extensions;
 using Core.Managers;
 using Core.Repositories;
 using Core.Services.License;
+using Core.Services.License.Models;
 using Core.Services.Session;
 using System;
 using System.Collections.Generic;
@@ -153,20 +154,20 @@ namespace Backend.Managers
 
         }
 
-        public async Task<List<ICompanyUser>> GetCompanies(string sessionToken)
+        public async Task<List<CompanyUser>> GetCompanies(string sessionToken)
         {
             var sessionUserId = await _sessionService.GetUserId(sessionToken);
             if (sessionUserId == null)
                 throw new Exception("Invalid session token");
             return await GetCompaniesByUserName(sessionUserId);
         }
-        private async Task<List<ICompanyUser>> GetCompaniesByUserName(string userName)
+        private async Task<List<CompanyUser>> GetCompaniesByUserName(string userName)
         {            
             // Admin user has top access to all companies
             if (userName == Constants.AdminUserName)
             {
                 var companies = await _userRepository.Company.List();
-                var adminCompanies = new List<ICompanyUser>(companies.Select(x => new CompanyUser
+                var adminCompanies = new List<CompanyUser>(companies.Select(x => new CompanyUser
                 {
                     CompanyId = x.Id,
                     PermissionLevel = 10,
@@ -176,6 +177,7 @@ namespace Backend.Managers
             }
 
             return (await _userRepository.User.GetCompanies(userName))
+                .Select(x => x.ToDto())
                 .ToList();
         }
 
@@ -196,16 +198,16 @@ namespace Backend.Managers
             return _companyRepositoryResolver.Resolve(activeCompanyId);
         }
 
-        public async Task<ICompany> GetActiveCompany(string sessionToken)
+        public async Task<Company> GetActiveCompany(string sessionToken)
         {
             var session = await _sessionService.GetSession(sessionToken);
             if (session == null)
                 throw new Exception("Invalid session token");
             var activeCompanyId = session.ActiveCompany;
-            return await _userRepository.Company.Get(activeCompanyId);
+            return (await _userRepository.Company.Get(activeCompanyId)).ToDto();
         }
 
-        public async Task<ICompany> SetActiveCompany(string sessionToken, string companyId)
+        public async Task<Company> SetActiveCompany(string sessionToken, string companyId)
         {
             var session = await _sessionService.GetSession(sessionToken);
             if (session == null)
@@ -223,15 +225,15 @@ namespace Backend.Managers
             // Update user Settings
             await _userRepository.UserSettings.Update(new UserSettings { UserName = session.UserId, LastOpenCompanyId = companyId });
 
-            return await _userRepository.Company.Get(companyId);
+            return (await _userRepository.Company.Get(companyId)).ToDto();
         }
 
-        public Task<ILicense> GetLicense(string sessionToken)
+        public Task<License> GetLicense(string sessionToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task SetLicense(string sessionToken, ILicense license)
+        public Task SetLicense(string sessionToken, License license)
         {
             throw new NotImplementedException();
         }

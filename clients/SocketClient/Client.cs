@@ -39,6 +39,10 @@ namespace SocketClient
         public IUserApi UserApi { get; }
         public ICompanyApi CompanyApi { get; }
         public IJobApi JobApi { get; }
+        public ICompanyOptionsApi CompanyOptionsApi { get; }
+        public ICustomerApi CustomerApi { get; }
+        public ICustomerRouteApi CustomerRouteApi { get; }
+        public IDocumentTypeApi DocumentTypeApi { get; }
 
         public void Connect()
         {

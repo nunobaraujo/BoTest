@@ -8,7 +8,7 @@ namespace Contracts.Models
     public class User : IUser
     {   
         public string UserName { get; set; }
-        [JsonIgnore]
+        [IgnoreMember, JsonIgnore]
         public string PasswordHash { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -22,7 +22,7 @@ namespace Contracts.Models
         public string Language { get; set; }
         public string Pin { get; set; }
         public string Email { get; set; }
-        [JsonIgnore]
+        [IgnoreMember,JsonIgnore]
         public string Salt { get; set; }
         public bool Encrypted { get; set; }
     }

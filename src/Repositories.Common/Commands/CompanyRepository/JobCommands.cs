@@ -14,16 +14,12 @@ namespace Repositories.Common.Commands.CompanyRepository
 {
     internal class JobCommands: IJobCommands
     {
-        private readonly Func<IDbConnection> _createdDbConnection;
-        private readonly Func<string> _getLastCreatedId;
-        private readonly Func<string> _getEncryptionKey;
+        private readonly Func<IDbConnection> _createdDbConnection;        
         private readonly ILogger _log;
 
-        public JobCommands(Func<IDbConnection> createdDbConnection, Func<string> getLastCreatedId, Func<string> getEncryptionKey, ILogger log)
+        public JobCommands(Func<IDbConnection> createdDbConnection, ILogger log)
         {
             _createdDbConnection = createdDbConnection;
-            _getLastCreatedId = getLastCreatedId;
-            _getEncryptionKey = getEncryptionKey;
             _log = log;
         }
 

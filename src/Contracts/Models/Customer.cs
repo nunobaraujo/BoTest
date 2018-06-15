@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Contracts.Models
 {
+    [MessagePackObject(keyAsPropertyName: true)]
     public class Customer : ICustomer
     {
         public string Id { get; set; }

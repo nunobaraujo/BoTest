@@ -87,7 +87,7 @@ namespace Backend.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("GetCompanies/")]
-        public async Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request)
+        public async Task<List<CompanyUser>> GetCompanies(BearerTokenRequest request)
         {
             return await _userManager.GetCompanies(request.Token);
         }

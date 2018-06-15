@@ -8,6 +8,10 @@ namespace Contracts.Clients
         IUserApi UserApi { get; }
         ICompanyApi CompanyApi { get; }
 
+        ICompanyOptionsApi CompanyOptionsApi { get; }
+        ICustomerApi CustomerApi { get; }
+        ICustomerRouteApi CustomerRouteApi { get; }
+        IDocumentTypeApi DocumentTypeApi { get; }
         IJobApi JobApi { get; }
     }
 }

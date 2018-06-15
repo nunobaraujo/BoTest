@@ -36,7 +36,10 @@ namespace SqlRepository.Tests
                 Language = "pt-PT",
                 Pin = "1234",
                 Email = "someMail@mail.com",
-                UserName = "TestUser01",
+                UserName = Guid.NewGuid()
+                    .ToString()
+                    .Replace("-","")
+                    .ToUpper(),
                 PasswordHash = "i28PqffNhA9YUqoTY2wGow==",
                 Salt = "E66CD3E5B1CF"
             };
@@ -46,7 +49,7 @@ namespace SqlRepository.Tests
             Assert.IsNotNull(user1);
             // READ
             var createdUser = await _userRepository.User.Get(user1.UserName);
-            Assert.AreEqual(createdUser.UserName, user1);
+            Assert.AreEqual(createdUser.UserName, user1.UserName);
             // UPDATE
             var updatedUser = createdUser.ToDto();
             updatedUser.Pin = "9876";

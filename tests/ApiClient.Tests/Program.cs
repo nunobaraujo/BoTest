@@ -39,7 +39,7 @@ namespace ApiClient.Tests
         private static async Task JobTests(IRestClient apiClient, string sessionToken)
         {
             var btoken = new BearerTokenRequest { Token = sessionToken };
-            var jobs = await apiClient.JobApi.List(btoken);
+            var jobs = await apiClient.JobApi.GetByDate(new DateIntervalRequest { DateFrom = DateTime.Parse("2010-01-01"), DateTo = DateTime.UtcNow.AddDays(1), Token = sessionToken }).Dump();
             var lastJob = await apiClient.JobApi.Get(jobs.Where(x => x.CustomerRouteId != null).Last().Id, btoken).Dump();
 
             var job = new Contracts.Models.Job
@@ -65,8 +65,7 @@ namespace ApiClient.Tests
             if (savedJob2.Notes != savedJob.Notes)
                 Console.WriteLine("Update JObe Failed");
 
-
-            var dateList = await apiClient.JobApi.GetByDate(new DateIntervalRequest  { DateFrom = DateTime.UtcNow.AddDays(-1), DateTo = DateTime.UtcNow.AddDays(1), Token = sessionToken }).Dump();
+                        
             var clientList = await apiClient.JobApi.GetByCustomer(savedJob2.CustomerId, btoken).Dump();
             var clientRouteList = await apiClient.JobApi.GetByCustomerRoute(savedJob2.CustomerRouteId, btoken).Dump();
             await apiClient.JobApi.Delete(savedJob2.Id, btoken).Dump();

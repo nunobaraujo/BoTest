@@ -43,7 +43,7 @@ namespace Services.Controllers
                 .ToDto();
         }
 
-        public async Task<List<ICompanyUser>> GetCompanies(BearerTokenRequest request)
+        public async Task<List<CompanyUser>> GetCompanies(BearerTokenRequest request)
         {
             return await _userManager.GetCompanies(request.Token);
         }

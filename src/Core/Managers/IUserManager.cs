@@ -2,6 +2,7 @@
 using Contracts.Models;
 using Core.Repositories;
 using Core.Services.License;
+using Core.Services.License.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,15 +21,15 @@ namespace Core.Managers
 
         Task SetPassword(string sessionToken, string password);
 
-        Task<List<ICompanyUser>> GetCompanies(string sessionToken);
+        Task<List<CompanyUser>> GetCompanies(string sessionToken);
 
         Task<IUserRepository> GetUserRepository(string sessionToken);
         Task<ICompanyRepository> ResolveRepository(string sessionToken);
 
-        Task<ICompany> GetActiveCompany(string sessionToken);
-        Task<ICompany> SetActiveCompany(string sessionToken, string companyId);
+        Task<Company> GetActiveCompany(string sessionToken);
+        Task<Company> SetActiveCompany(string sessionToken, string companyId);
 
-        Task<ILicense> GetLicense(string sessionToken);
-        Task SetLicense(string sessionToken, ILicense license);
+        Task<License> GetLicense(string sessionToken);
+        Task SetLicense(string sessionToken, License license);
     }
 }
