@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.Models;
 using Core.Repositories;
 using Core.Services.License;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace Core.Managers
         Task<string> LogIn(string userName, string password, string userInfo);
         Task LogOut(string sessionToken);
 
-        Task<IUser> CreateUser(string userName, string password, string email);
+        Task<User> CreateUser(string userName, string password, string email);
                 
-        Task<IUser> GetUserById(string sessionToken, string userId);
-        Task<IUser> UpdateUser(string sessionToken, IUser user);
+        Task<User> GetUserById(string sessionToken, string userId);
+        Task<User> UpdateUser(string sessionToken, User user);
         Task DeleteUser(string sessionToken, string userId);
 
         Task SetPassword(string sessionToken, string password);

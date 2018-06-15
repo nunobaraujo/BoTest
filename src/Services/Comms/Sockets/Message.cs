@@ -78,13 +78,14 @@ namespace Services.Comms.Sockets
         public T GetParameter<T>(int paramIndex)
         {
             var paramList = Protocol.DecodeBody(body);
-            return ModelSerializer.Deserialize<T>(paramList[paramIndex]);
+            return MessagePackSerializer.Deserialize<T>(paramList[paramIndex]);
         }
         public void AddParameter<T>(T parameter)
         {
             var paramList = Protocol.DecodeBody(body);
-            paramList.Add(ModelSerializer.Serialize(parameter));
-            body = Protocol.EncodeBody(paramList);
+            paramList.Add(MessagePackSerializer.Serialize(parameter));
+            var tempBody = Protocol.EncodeBody(paramList);
+            body = tempBody;
         }
 
         internal void SetInnerbody(byte[] innerBody)

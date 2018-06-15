@@ -20,7 +20,7 @@ namespace Services.Comms.Sockets
         
         public SocketHost(IPEndPoint endPoint, ILogger logger, IUserManager userManager)
             : base(endPoint)
-        {
+        {            
             _logger = logger;
             _userManager = userManager;
 

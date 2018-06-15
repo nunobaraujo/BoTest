@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using MessagePack;
+using Newtonsoft.Json;
 using System;
 
 namespace Contracts.Models
 {
+    [MessagePackObject(keyAsPropertyName: true)]
     public class User : IUser
     {   
         public string UserName { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Services
 {
-    static class ModelSerializer
+    static class MessagePackSerializer
     {
         public static T Deserialize<T>(byte[] modelBytes)
         {

@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Contracts.Api;
+using Contracts.Models;
 using Contracts.Requests;
 using Core.Extensions;
 using Core.Managers;
@@ -21,7 +22,7 @@ namespace Services.Controllers
             _clientConnection = clientConnection;
         }
 
-        public async Task<IUser> Add([Body] CreateUserRequest request)
+        public async Task<User> Add([Body] CreateUserRequest request)
         {
             return await _userManager.CreateUser(request.UserName, request.UserPassword, request.Email);
         }
@@ -36,7 +37,7 @@ namespace Services.Controllers
             await _userManager.DeleteUser(request.Token, request.Id);
         }
 
-        public async Task<IUser> Get(IdRequest request)
+        public async Task<User> Get(IdRequest request)
         {
             return (await _userManager.GetUserById(request.Token, request.Id))?
                 .ToDto();
@@ -47,7 +48,7 @@ namespace Services.Controllers
             return await _userManager.GetCompanies(request.Token);
         }
 
-        public async Task<IUser> Update([Body] UserRequest request)
+        public async Task<User> Update([Body] UserRequest request)
         {
             return await _userManager.UpdateUser(request.Token, request.User);
         }

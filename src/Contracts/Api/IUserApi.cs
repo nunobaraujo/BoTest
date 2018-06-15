@@ -1,4 +1,5 @@
 ﻿
+using Contracts.Models;
 using Contracts.Requests;
 using Refit;
 using System.Collections.Generic;
@@ -12,18 +13,18 @@ namespace Contracts.Api
         /// Get user by id
         /// </summary>
         [Get("/api/user/")]
-        Task<IUser> Get(IdRequest request);
+        Task<User> Get(IdRequest request);
         /// <summary>
         /// Create new user
         /// </summary>
         [Post("/api/user/")]
-        Task<IUser> Add([Body]CreateUserRequest request);
+        Task<User> Add([Body]CreateUserRequest request);
 
         /// <summary>
         /// Update user info
         /// </summary>
         [Put("/api/user/")]
-        Task<IUser> Update([Body]UserRequest request);
+        Task<User> Update([Body]UserRequest request);
 
         /// <summary>
         /// Delete user

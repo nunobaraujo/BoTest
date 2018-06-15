@@ -68,7 +68,7 @@ namespace Backend.Managers
             await _sessionService.KillSession(sessionToken);
         }
 
-        public async Task<IUser> CreateUser(string userName, string password, string email)
+        public async Task<User> CreateUser(string userName, string password, string email)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
                 throw new ArgumentException($"{nameof(userName)}, {nameof(password)} and {nameof(email)} cannot be empty.");
@@ -92,13 +92,14 @@ namespace Backend.Managers
                 Language = "pt-PT",
                 Pin = "1234",
                 FirstName = userName,
-                LastName = email
+                LastName = email,
+                Encrypted = true
             };
             var pwuser = _userRepository.User.GeneratePassword(newUser, password);            
-            return await _userRepository.User.Add(pwuser);
+            return (await _userRepository.User.Add(pwuser)).ToDto();
         }
 
-        public async Task<IUser> GetUserById(string sessionToken, string userId)
+        public async Task<User> GetUserById(string sessionToken, string userId)
         {
             // Find by UserName
             var user  = await _userRepository.User.Get(userId);
@@ -113,11 +114,11 @@ namespace Backend.Managers
             var sessionUserName = await _sessionService.GetUserId(sessionToken);
             var sessionUser = await _userRepository.User.Get(sessionUserName);
             if (sessionUser.UserName == Core.Constants.AdminUser || sessionUserName == user.UserName)
-                return user;
+                return user.ToDto();
             else
                 throw new UnauthorizedAccessException($"No access to user {userId}");
         }        
-        public async Task<IUser> UpdateUser(string sessionToken, IUser user)
+        public async Task<User> UpdateUser(string sessionToken, User user)
         {
             var sessionUserId = await _sessionService.GetUserId(sessionToken);
             if (sessionUserId == null)
@@ -134,7 +135,7 @@ namespace Backend.Managers
             var editUser = user.ToDto();
             editUser.PasswordHash = existingUser.PasswordHash;
             editUser.Salt = existingUser.Salt;
-            return await _userRepository.User.Update(editUser);
+            return (await _userRepository.User.Update(editUser)).ToDto();
 
         }
         public Task DeleteUser(string sessionToken, string userId)
