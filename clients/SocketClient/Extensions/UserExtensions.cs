@@ -3,15 +3,17 @@ using Contracts.Requests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Services.Comms.Sockets;
+using Contracts.Models;
+using Core.Extensions;
 
 namespace SocketClient.Extensions
 {
     static class UserExtensions
     {
-        public static Task<IUser> UserAdd(this Client cli, CreateUserRequest request)
+        public static Task<User> UserAdd(this Client cli, CreateUserRequest request)
         {
             var result = cli.SendCustomMessage(SubCommand.UserAdd, request);
-            return Task.FromResult(result.GetParameter<IUser>());
+            return Task.FromResult(result.GetParameter<User>());
         }
         public static Task UserChangePassword(this Client cli, ChangePasswordRequest request)
         {
@@ -25,10 +27,10 @@ namespace SocketClient.Extensions
             return Task.FromResult(0);
         }
 
-        public static Task<IUser> UserGet(this Client cli, IdRequest request)
+        public static Task<User> UserGet(this Client cli, IdRequest request)
         {
             var result = cli.SendCustomMessage(SubCommand.UserGet, request);
-            return Task.FromResult(result.GetParameter<IUser>());
+            return Task.FromResult(result.GetParameter<User>());
         }
 
         public static Task<List<ICompanyUser>> UserGetCompanies(this Client cli, BearerTokenRequest request)
@@ -37,10 +39,10 @@ namespace SocketClient.Extensions
             return Task.FromResult(result.GetParameter<List<ICompanyUser>>());
         }
 
-        public static Task<IUser> UserUpdate(this Client cli, UserRequest request)
+        public static Task<User> UserUpdate(this Client cli, UserRequest request)
         {
             var result = cli.SendCustomMessage(SubCommand.UserUpdate, request);
-            return Task.FromResult(result.GetParameter<IUser>());
+            return Task.FromResult(result.GetParameter<User>());
         }
 
     }
