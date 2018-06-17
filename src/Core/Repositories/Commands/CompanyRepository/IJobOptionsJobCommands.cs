@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Core.Repositories.Commands.CompanyRepository
 {
-    public interface IJobOptionsCommands : ICrudBaseCommands<IJobOptions>
+    public interface IJobOptionsJobCommands : ICrudBaseCommands<IJobOptionsJob>
     {
-        Task<IList<IJobOptions>> GetByJob(string jobId);
+        Task<IList<IJobOptionsJob>> GetByJob(string jobId);
     }
 }

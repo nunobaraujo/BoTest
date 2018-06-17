@@ -16,5 +16,8 @@ namespace Core.Repositories
         IJobHistoryCommands JobHistory { get; }
         IJobOptionsCommands JobOptions { get; }
         IJobOptionsCategoryCommands JobOptionsCategory { get; }
+        IJobOptionsJobCommands JobOptionsJob { get; }
+        IJobServiceCommands JobService { get; }
+
     }
 }
