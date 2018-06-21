@@ -30,5 +30,29 @@ namespace Repositories.Common
         {
             return new CompanyOptionsCommands(_createdDbConnection, _log);
         }
+        public ICustomerCommands CreateCustomerCommands()
+        {
+            return new CustomerCommands(_createdDbConnection, _log);
+        }
+        public ICustomerRouteCommands CreateCustomerRouteCommands()
+        {
+            return new CustomerRouteCommands(_createdDbConnection, _log);
+        }
+        public IDocumentCommands CreateDocumentCommands()
+        {
+            return new DocumentCommands(_createdDbConnection, _log);
+        }
+        public IDocumentLineCommands CreateDocumentLineCommands()
+        {
+            return new DocumentLineCommands(_createdDbConnection, _log);
+        }
+        public IDocumentSeriesCommands CreateDocumentSeriesCommands()
+        {
+            return new DocumentSeriesCommands(_createdDbConnection, _log);
+        }
+        public IRouteCommands CreateRouteCommands()
+        {
+            return new RouteCommands(_createdDbConnection, _log);
+        }
     }
 }

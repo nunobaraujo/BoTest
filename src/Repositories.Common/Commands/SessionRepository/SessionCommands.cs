@@ -37,7 +37,7 @@ namespace Repositories.Common.Commands.SessionRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(SessionCommands), nameof(Get), token, ex);
+                _log?.WriteError(nameof(SessionCommands), nameof(Get), token, ex);
                 throw;
             }
         }
@@ -56,7 +56,7 @@ namespace Repositories.Common.Commands.SessionRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(SessionCommands), nameof(New), session?.ToJson(), ex);
+                _log?.WriteError(nameof(SessionCommands), nameof(New), session?.ToJson(), ex);
                 throw;
             }
         }
@@ -81,7 +81,7 @@ namespace Repositories.Common.Commands.SessionRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(SessionCommands), nameof(Update), session?.ToJson(), ex);
+                _log?.WriteError(nameof(SessionCommands), nameof(Update), session?.ToJson(), ex);
                 throw;
             }
         }
@@ -98,7 +98,7 @@ namespace Repositories.Common.Commands.SessionRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(SessionCommands), nameof(Remove), token, ex);
+                _log?.WriteError(nameof(SessionCommands), nameof(Remove), token, ex);
                 throw;
             }
         }

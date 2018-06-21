@@ -41,7 +41,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(List), null, ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(List), null, ex);
                 throw;
             }
         }
@@ -62,7 +62,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(Get), companyId, ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(Get), companyId, ex);
                 throw;
             }
         }
@@ -101,7 +101,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(Add), company?.ToJson(), ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(Add), company?.ToJson(), ex);
                 throw;
             }
         }
@@ -128,7 +128,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(Update), company?.ToJson(), ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(Update), company?.ToJson(), ex);
                 throw;
             }
         }
@@ -147,7 +147,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(Delete), companyId, ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(Delete), companyId, ex);
                 throw;
             }
         }
@@ -175,7 +175,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CompanyCommands), nameof(UpdateBatch), null, ex);
+                _log?.WriteError(nameof(CompanyCommands), nameof(UpdateBatch), null, ex);
                 throw;
             }
         }

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Core.Repositories.Commands.CompanyRepository
 {
-    public interface IProductCommands : ICrudBaseCommands<IProduct>
+    public interface IDocumentLineCommands : ICrudBaseCommands<IDocumentLine>
     {
-        Task<IList<IProduct>> GetByProductCategory(string productCategoryId);
+        Task<IList<IDocumentLine>> GetByDocument(string docId);
     }
 }

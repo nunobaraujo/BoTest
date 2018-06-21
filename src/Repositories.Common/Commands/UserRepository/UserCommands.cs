@@ -47,7 +47,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(Auth), userName, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(Auth), userName, ex);
                 throw;
             }
         }
@@ -65,7 +65,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(List), null, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(List), null, ex);
                 throw;
             }
         }
@@ -86,7 +86,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(Get), userName, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(Get), userName, ex);
                 throw;
             }
         }
@@ -107,7 +107,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(GetByEmail), email, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(GetByEmail), email, ex);
                 throw;
             }
         }
@@ -146,7 +146,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(Add), user?.ToJson(), ex);
+                _log?.WriteError(nameof(UserCommands), nameof(Add), user?.ToJson(), ex);
                 throw;
             }
         }
@@ -173,7 +173,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(Update), user?.ToJson(), ex);
+                _log?.WriteError(nameof(UserCommands), nameof(Update), user?.ToJson(), ex);
                 throw;
             }
         }
@@ -194,7 +194,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(Delete), userName, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(Delete), userName, ex);
                 throw;
             }
         }
@@ -212,7 +212,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(SetPassword), userId, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(SetPassword), userId, ex);
                 throw;
             }
         }
@@ -238,7 +238,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(GetCompanies), userId, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(GetCompanies), userId, ex);
                 throw;
             }
         }
@@ -266,7 +266,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserCommands), nameof(UpdateBatch), null, ex);
+                _log?.WriteError(nameof(UserCommands), nameof(UpdateBatch), null, ex);
                 throw;
             }
         }

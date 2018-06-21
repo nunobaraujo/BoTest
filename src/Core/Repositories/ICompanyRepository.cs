@@ -9,6 +9,8 @@ namespace Core.Repositories
         ICompanyOptionsCommands CompanyOptions { get; }
         ICustomerCommands Customer { get; }
         ICustomerRouteCommands CustomerRoute { get; }
+        IDocumentCommands Document { get; }
+        IDocumentLineCommands DocumentLine { get; }
         IDocumentSeriesCommands DocumentSeries { get; }
         IDocumentTypeCommands DocumentType{ get; }
         IJobCommands Job { get; }
@@ -18,6 +20,16 @@ namespace Core.Repositories
         IJobOptionsCategoryCommands JobOptionsCategory { get; }
         IJobOptionsJobCommands JobOptionsJob { get; }
         IJobServiceCommands JobService { get; }
+        IJobServiceProductsCommands JobServiceProducts { get; }
+        IPaymentDueCommands PaymentDue { get; }
+        IPermissionsCommands Permissions { get; }
+        IProductCategoryCommands ProductCategory{ get; }
+        IProductCategoryDiscountCommands ProductCategoryDiscount { get; }
+        IProductCommands Product { get; }
+        IRouteCommands Route { get; }
+        IServiceCommands Service { get; }
+        ITicketCommands Ticket { get; }
+        IVatCommands Vat { get; }
 
     }
 }

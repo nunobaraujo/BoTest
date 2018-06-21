@@ -55,7 +55,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserSettingsCommands), nameof(Add), userSettings?.ToJson(), ex);
+                _log?.WriteError(nameof(UserSettingsCommands), nameof(Add), userSettings?.ToJson(), ex);
                 throw;
             }
         }
@@ -73,7 +73,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserSettingsCommands), nameof(Delete), userName, ex);
+                _log?.WriteError(nameof(UserSettingsCommands), nameof(Delete), userName, ex);
                 throw;
             }
         }
@@ -94,7 +94,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserSettingsCommands), nameof(Get), userName, ex);
+                _log?.WriteError(nameof(UserSettingsCommands), nameof(Get), userName, ex);
                 throw;
             }
         }
@@ -121,7 +121,7 @@ namespace Repositories.Common.Commands.UserRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(UserSettingsCommands), nameof(Update), userSettings?.ToJson(), ex);
+                _log?.WriteError(nameof(UserSettingsCommands), nameof(Update), userSettings?.ToJson(), ex);
                 throw;
             }
         }

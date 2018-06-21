@@ -5,7 +5,6 @@ using Core.Repositories.Commands.CompanyRepository;
 using Dapper;
 using NBsoft.Logs.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Get), null, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(Get), null, ex);
                 throw;
             }
         }
@@ -69,7 +68,7 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Set), companyOptions?.ToJson(), ex);
+                _log?.WriteError(nameof(JobCommands), nameof(Set), companyOptions?.ToJson(), ex);
                 throw;
             }
         }

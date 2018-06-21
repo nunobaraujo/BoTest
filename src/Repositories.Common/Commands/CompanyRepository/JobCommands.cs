@@ -37,114 +37,146 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(GetByCustomer), null, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(List), null, ex);
                 throw;
             }
         }
-        public async Task<IJob> Get(string jobId)
+        public async Task<IJob> Get(string id)
         {            
             try
             {
-                if (string.IsNullOrEmpty(jobId))
-                    throw new ArgumentNullException(nameof(jobId));
+                if (string.IsNullOrEmpty(id))
+                    throw new ArgumentNullException(nameof(id));
 
                 var query = $"SELECT {Common.GetColumnNames<IJob>()} FROM [Job] WHERE Id = @Id";
                 using (var cnn = _createdDbConnection())
                 {
-                    return (await cnn.QueryAsync<Job>(query, new { Id = jobId }))
+                    return (await cnn.QueryAsync<Job>(query, new { Id = id }))
                         .FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Get), jobId, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(Get), id, ex);
                 throw;
             }
         }
-        public async Task<string> Add(IJob job)
+        public async Task<string> Add(IJob model)
+        {
+            return (await AddBatch(new List<IJob>(new IJob[] { model })))
+                .FirstOrDefault();
+        }
+        public async Task Delete(string id)
+        {
+            await DeleteBatch(new List<string>(new string[] { id }));
+        }
+        public async Task<string> Update(IJob model)
+        {
+            return (await UpdateBatch(new List<IJob>(new IJob[] { model })))
+                 .FirstOrDefault();
+        }
+
+        public async Task<IList<string>> AddBatch(IList<IJob> models)
         {
             try
             {
-                if (job == null || job.Id == null)
-                    throw new ArgumentNullException(nameof(job));
-                
+                if (models == null || models.Count <= 0)
+                    throw new ArgumentNullException(nameof(models));
+
                 using (var cnn = _createdDbConnection())
                 {
                     cnn.Open();
                     var transaction = cnn.BeginTransaction();
-                    // Validate Id
-                    var jobId = await cnn.ExecuteScalarAsync(
-                        "SELECT Id FROM [Job] WHERE Id=@Id", new { job.Id }, transaction);
-                    if (jobId != null)
-                        throw new InvalidConstraintException($"Reference already exists: {job.Id}");
                     
+                    foreach (var job in models)
+                    {
+                        // Validate Ids
+                        if (job.Id == null)
+                            throw new ArgumentNullException(nameof(job.Id));
+                        var jobId = await cnn.ExecuteScalarAsync(
+                            "SELECT Id FROM [Job] WHERE Id=@Id", new { job.Id }, transaction);
+                        if (jobId != null)
+                            throw new InvalidConstraintException($"Id already exists: {job.Id}");
+                    }
                     string query =
                         $"INSERT INTO [Job] ({Common.GetColumnNames<IJob>()}) VALUES ({Common.GetFieldNames<IJob>()});";
-                    var res = await cnn.ExecuteAsync(query, job, transaction);
-                    if (res != 1)
+                    var res = await cnn.ExecuteAsync(query, models, transaction);
+                    if (res != models.Count)
                         throw new Exception($"ExecuteAsync failed: {query}");
                     transaction.Commit();
-                    return job.Id;
+
+                    return models.Select(m => m.Id)
+                        .ToList();
                 }
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Add), job?.ToJson(), ex);
+                _log?.WriteError(nameof(JobCommands), nameof(AddBatch), models?.ToJson(), ex);
                 throw;
             }
         }
-        public async Task Delete(string jobId)
+        public async Task<IList<string>> UpdateBatch(IList<IJob> models)
         {
             try
             {
-                using (var cnn = _createdDbConnection())
-                {
-                    cnn.Open();
-                    var transaction = cnn.BeginTransaction();                    
-                    // Validate if there is history job cannot be deleted
-                    var res = await cnn.ExecuteScalarAsync(
-                        $"SELECT Count(Id) FROM [JobHistory] WHERE JobId = @JobId", new { JobId = jobId }, transaction);
-                    if (res == null || res.ToString() != "0")
-                        throw new InvalidOperationException("Job cannot be deleted.");
-                    //cnn.Open();
-                    await cnn.ExecuteAsync(
-                        $"DELETE FROM [Job] WHERE Id = @Id", new { Id = jobId}, transaction);
-                    transaction.Commit();
-                }
-            }
-            catch (Exception ex)
-            {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Delete), jobId, ex);
-                throw;
-            }
-        }
-        public async Task<string> Update(IJob job)
-        {
-            try
-            {
-                if (job == null || job.Id == null)
-                    throw new ArgumentNullException(nameof(job));
+                if (models == null || models.Count<=0)
+                    throw new ArgumentNullException(nameof(models));
 
                 using (var cnn = _createdDbConnection())
                 {
                     cnn.Open();
                     var transaction = cnn.BeginTransaction();
-                    
+
                     string query =
                         $"UPDATE [Job] SET {Common.GetUpdateQueryFields<IJob>("Id")} WHERE Id=@Id";
-                    if (await cnn.ExecuteAsync(query, job, transaction) != 1)
+                    
+                    if (await cnn.ExecuteAsync(query, models, transaction) != models.Count)
                         throw new Exception($"ExecuteAsync failed: {query}");
                     transaction.Commit();
-                    return job.Id;
+                    return models.Select(m => m.Id)
+                        .ToList();
                 }
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(Update), job?.ToJson(), ex);
+                _log?.WriteError(nameof(JobCommands), nameof(UpdateBatch), models?.ToJson(), ex);
                 throw;
             }
         }
+        public async Task DeleteBatch(IList<string> ids)
+        {
+            try
+            {
+                if (ids == null || ids.Count <= 0)
+                    throw new ArgumentNullException(nameof(ids));
 
+                using (var cnn = _createdDbConnection())
+                {
+                    cnn.Open();
+                    var transaction = cnn.BeginTransaction();
+                    foreach (var jobId in ids)
+                    {
+                        if (jobId == null)
+                            throw new ArgumentNullException(nameof(jobId));
+                        // Validate if there is history job cannot be deleted
+                        var res = await cnn.ExecuteScalarAsync(
+                            $"SELECT Count(Id) FROM [JobHistory] WHERE JobId = @JobId", new { JobId = jobId }, transaction);
+                        if (res == null || res.ToString() != "0")
+                            throw new InvalidOperationException("Job cannot be deleted.");
+                    }
+
+                    //cnn.Open();
+                    await cnn.ExecuteAsync(
+                        $"DELETE FROM [Job] WHERE Id = @Id", new { Id = ids }, transaction);
+                    transaction.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log?.WriteError(nameof(JobCommands), nameof(DeleteBatch), ids.ToJson(), ex);
+                throw;
+            }
+        }
 
         public async Task<IList<IJob>> GetByDate(DateTime from, DateTime to)
         {
@@ -160,11 +192,10 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(GetByDate), query, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(GetByDate), query, ex);
                 throw;
             }
         }
-
         public async Task<IList<IJob>> GetByCustomer(string customerId)
         {
             if (string.IsNullOrEmpty(customerId))
@@ -181,11 +212,10 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(GetByCustomer), query, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(GetByCustomer), query, ex);
                 throw;
             }
-        }
-                
+        }                
         public async Task<IList<IJob>> GetByCustomerRoute(string customerRouteId)
         {
             if (string.IsNullOrEmpty(customerRouteId))
@@ -203,9 +233,10 @@ namespace Repositories.Common.Commands.CompanyRepository
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(JobCommands), nameof(GetByCustomerRoute), query, ex);
+                _log?.WriteError(nameof(JobCommands), nameof(GetByCustomerRoute), query, ex);
                 throw;
             }
         }
+                
     }
 }

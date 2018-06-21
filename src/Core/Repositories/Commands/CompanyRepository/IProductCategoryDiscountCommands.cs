@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Contracts;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Core.Repositories.Commands.CompanyRepository
 {
-    interface IProductCategoryDiscountCommands
+    public interface IProductCategoryDiscountCommands: ICrudBaseCommands<IProductCategoryDiscount>
     {
+        Task<IList<IProductCategoryDiscount>> GetByCustomer(string customerId);
     }
 }
