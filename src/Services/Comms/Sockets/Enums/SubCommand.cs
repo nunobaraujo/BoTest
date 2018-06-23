@@ -24,6 +24,8 @@
         JobDelete,
         JobGetByCustomer,
         JobGetByCustomerRoute,
-        JobGetByDate
+        JobGetByDate,
+
+        CreateDocument
     }
 }

@@ -302,6 +302,7 @@ namespace Services.Comms.Sockets
 
         private ISessionApi Session(IClientConnection connection) => new SessionController(connection, _userManager);
         private IUserApi User(IClientConnection connection) => new UserController(connection, _userManager);
+        private IBusinessApi IBusinessApi(IClientConnection connection) => throw new NotImplementedException(); //new BusinessController(connection, _userManager);
 
     }     
 }

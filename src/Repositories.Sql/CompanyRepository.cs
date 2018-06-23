@@ -48,12 +48,28 @@ namespace Repositories.Sql
             CustomerRoute = companyRepositoryFactory.CreateCustomerRouteCommands();
             Document = companyRepositoryFactory.CreateDocumentCommands();
             DocumentLine = companyRepositoryFactory.CreateDocumentLineCommands();
+
             DocumentSeries = companyRepositoryFactory.CreateDocumentSeriesCommands();
             DocumentType = companyRepositoryFactory.CreateDocumentTypeCommands();
             FrontTerminal = companyRepositoryFactory.CreateFrontTerminalCommands();
             Job = companyRepositoryFactory.CreateJobCommands();
+            JobHistory = companyRepositoryFactory.CreateJobHistoryCommands();
 
+            JobOptions = companyRepositoryFactory.CreateJobOptionsCommands();
+            JobOptionsJob = companyRepositoryFactory.CreateJobOptionsJobCommands();
+            JobService = companyRepositoryFactory.CreateJobServiceCommands();
+            JobServiceProducts = companyRepositoryFactory.CreateJobServiceProductsCommands();
+            PaymentDue = companyRepositoryFactory.CreatePaymentDueCommands();
+
+            Permissions = companyRepositoryFactory.CreatePermissionsCommands();
+            ProductCategory = companyRepositoryFactory.CreateProductCategoryCommands();
+            ProductCategoryDiscount = companyRepositoryFactory.CreateProductCategoryDiscountCommands();
+            Product = companyRepositoryFactory.CreateProductCommands();
             Route = companyRepositoryFactory.CreateRouteCommands();
+
+            Service = companyRepositoryFactory.CreateServiceCommands();
+            Ticket = companyRepositoryFactory.CreateTicketCommands();
+            Vat = companyRepositoryFactory.CreateVatCommands();
         }
 
         public void SetEncryptionKey(string encryptionKey)

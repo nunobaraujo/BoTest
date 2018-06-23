@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="NBsoft.Logs.Sql" Version="1.0.1" />
+    <PackageReference Include="NBsoft.Logs" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>

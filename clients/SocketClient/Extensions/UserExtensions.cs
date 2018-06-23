@@ -33,10 +33,10 @@ namespace SocketClient.Extensions
             return Task.FromResult(result.GetParameter<User>());
         }
 
-        public static Task<List<ICompanyUser>> UserGetCompanies(this Client cli, BearerTokenRequest request)
+        public static Task<List<CompanyUser>> UserGetCompanies(this Client cli, BearerTokenRequest request)
         {
             var result = cli.SendCustomMessage(SubCommand.UserGetCompanies, request);
-            return Task.FromResult(result.GetParameter<List<ICompanyUser>>());
+            return Task.FromResult(result.GetParameter<List<CompanyUser>>());
         }
 
         public static Task<User> UserUpdate(this Client cli, UserRequest request)
@@ -45,5 +45,10 @@ namespace SocketClient.Extensions
             return Task.FromResult(result.GetParameter<User>());
         }
 
+        public static Task<Document> BusinessCreateDocument(this Client cli, CreateDocumentRequest request)
+        {
+            var result = cli.SendCustomMessage(SubCommand.CreateDocument, request);
+            return Task.FromResult(result.GetParameter<Document>());
+        }
     }
 }

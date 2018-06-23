@@ -7,7 +7,7 @@ namespace Contracts
         string Id { get; }
         string JobServiceId { get; }
         string ProductId { get; }
-
+        
         DateTime CreationDate { get; }
         
         string Notes { get; }

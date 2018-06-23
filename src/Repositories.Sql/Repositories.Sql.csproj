@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NBsoft.Logs.Sql" Version="1.0.1" />
+    <PackageReference Include="NBsoft.Logs" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>

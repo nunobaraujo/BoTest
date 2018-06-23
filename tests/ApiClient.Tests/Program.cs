@@ -28,12 +28,14 @@ namespace ApiClient.Tests
             // 1
             var userId = await apiClient.UserApi.Get(new IdRequest { Id = "1", Token = sessionToken }).Dump();
 
-            await JobTests(apiClient, sessionToken);
+            //await JobTests(apiClient, sessionToken);
+            await BusinessTests(apiClient, sessionToken);
 
             // Last
             await apiClient.SessionApi.LogOut(new BearerTokenRequest { Token = sessionToken }).Dump();
 
             Console.WriteLine("All Tests Finished");
+            Console.ReadKey();
         }
 
         private static async Task JobTests(IRestClient apiClient, string sessionToken)
@@ -69,6 +71,35 @@ namespace ApiClient.Tests
             var clientList = await apiClient.JobApi.GetByCustomer(savedJob2.CustomerId, btoken).Dump();
             var clientRouteList = await apiClient.JobApi.GetByCustomerRoute(savedJob2.CustomerRouteId, btoken).Dump();
             await apiClient.JobApi.Delete(savedJob2.Id, btoken).Dump();
+
+        }
+
+        private static async Task BusinessTests(IRestClient apiClient, string sessionToken)
+        {
+            var clientList = await apiClient.CustomerApi.List(new BearerTokenRequest { Token = sessionToken });
+            var seriesList = await apiClient.DocumentSeriesApi.List(new BearerTokenRequest { Token = sessionToken });
+            //var productList = await apiClient.ProductApi.List(new BearerTokenRequest { Token = sessionToken });
+
+            var btoken = new CreateDocumentRequest { Token = sessionToken };
+            btoken.Document = new Contracts.Models.Document
+            {
+                Id = Guid.NewGuid().ToString().Replace("-", "").ToUpper(),
+                CustomerId = clientList.Last().Id,
+                DocumentSeriesId = seriesList.Last().Id,
+                CreationDate = DateTime.UtcNow,
+                Coin = "EUR",
+                DocumentDate = DateTime.UtcNow,
+                CustomerRouteId = null,               
+                Description = "Description ",
+                Exchange = 1,
+                ExpirationDate = DateTime.UtcNow.AddDays(1),
+                Notes ="",
+                PaymentType ="PP",
+                Report =""
+            };
+
+            var result = await apiClient.BusinessApi.CreateDocument(btoken);
+
 
         }
 

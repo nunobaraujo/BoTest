@@ -218,8 +218,7 @@ namespace Backend.Managers
             if (company == null || company.PermissionLevel < 1)
                 throw new UnauthorizedAccessException("No Access to company");
             
-            // Update Session Token
-                        
+            // Update Session Token                        
             await _sessionService.UpdateSessionUserInfo(sessionToken, companyId);
 
             // Update user Settings

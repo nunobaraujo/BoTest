@@ -24,7 +24,7 @@ namespace SocketClient.Api
         public async Task<User> Add(CreateUserRequest request)
         {
             _client.Connect();
-            return (await _client.UserAdd(request)).ToDto();
+            return await _client.UserAdd(request);
         }
 
         public Task ChangePassword(ChangePasswordRequest request)
@@ -42,14 +42,13 @@ namespace SocketClient.Api
         public async Task<User> Get(IdRequest request)
         {
             _client.Connect();
-            return (await _client.UserGet(request)).ToDto();
+            return await _client.UserGet(request);
         }
 
         public async Task<List<CompanyUser>> GetCompanies(BearerTokenRequest request)
         {
             _client.Connect();
             return (await _client.UserGetCompanies(request))
-                .Select(x => x.ToDto())
                 .ToList();
         }
 

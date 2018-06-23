@@ -11,6 +11,11 @@ namespace Contracts.Clients
         ICompanyOptionsApi CompanyOptionsApi { get; }
         ICustomerApi CustomerApi { get; }
         ICustomerRouteApi CustomerRouteApi { get; }
+
+
+        IBusinessApi BusinessApi { get; }
+
+        IDocumentSeriesApi DocumentSeriesApi { get; }
         IDocumentTypeApi DocumentTypeApi { get; }
         IJobApi JobApi { get; }
     }

@@ -218,6 +218,15 @@ namespace SqlRepository.Tests
         [Test]
         [Category("SQL")]
         [Category("CompanyRepository")]
+        public async Task JobServiceProductsByJob()
+        {
+            var rs = await _companyRepository.JobServiceProducts.GetByJob("13331"); ;
+            Assert.IsNotNull(rs);
+        }
+
+        [Test]
+        [Category("SQL")]
+        [Category("CompanyRepository")]
         public async Task RouteCRUD()
         {
             var obj = new Route

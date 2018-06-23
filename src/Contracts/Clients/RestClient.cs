@@ -15,6 +15,9 @@ namespace Contracts.Clients
         public ICustomerApi CustomerApi { get; }
         public ICustomerRouteApi CustomerRouteApi { get; }
         public IDocumentTypeApi DocumentTypeApi { get; }
+        public IBusinessApi BusinessApi { get; }
+
+        public IDocumentSeriesApi DocumentSeriesApi { get; }
 
         public RestClient(string url, string apiKey, string userAgent)
         {
@@ -30,6 +33,9 @@ namespace Contracts.Clients
             CustomerApi = RestService.For<ICustomerApi>(url, settings);
             CustomerRouteApi = RestService.For<ICustomerRouteApi>(url, settings);
             DocumentTypeApi = RestService.For<IDocumentTypeApi>(url, settings);
+
+            BusinessApi = RestService.For<IBusinessApi>(url, settings);
+            DocumentSeriesApi = RestService.For<IDocumentSeriesApi>(url, settings);
         }
     }
 }

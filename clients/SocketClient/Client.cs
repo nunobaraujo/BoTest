@@ -33,16 +33,23 @@ namespace SocketClient
 
             SessionApi = new SessionApi(this);
             UserApi = new UserApi(this);
+            BusinessApi = new BusinessApi(this);
         }
 
         public ISessionApi SessionApi { get; }
+
         public IUserApi UserApi { get; }
         public ICompanyApi CompanyApi { get; }
+
         public IJobApi JobApi { get; }
         public ICompanyOptionsApi CompanyOptionsApi { get; }
         public ICustomerApi CustomerApi { get; }
         public ICustomerRouteApi CustomerRouteApi { get; }
         public IDocumentTypeApi DocumentTypeApi { get; }
+
+        public IBusinessApi BusinessApi { get; }
+
+        public IDocumentSeriesApi DocumentSeriesApi => throw new NotImplementedException();
 
         public void Connect()
         {
